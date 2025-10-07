@@ -42,6 +42,7 @@ const initialResults: ResultsState = {
   liquidoAPagarTon: 0,
   freteSaca: 0,
   tributosSaca: 0,
+  custoIndustriaSaca: 0,
   liquidoFinalSaca: 0,
   liquidoFinalTon: 0,
   liquidoFinalCarga: 0,
@@ -79,9 +80,10 @@ export function Calculator() {
 
       const freteValorTon = data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0;
       const classificacaoValorTon = data.tipoFrete === 'CIF' ? data.valorClassificacao ?? 0 : 0;
+      const custoIndustriaTon = data.custoIndustria ?? 0;
 
       const totalTributosTon = tributoFunruralValorTon;
-      const outrosCustosTon = (data.custoIndustria ?? 0) + classificacaoValorTon;
+      const outrosCustosTon = custoIndustriaTon + classificacaoValorTon;
       
       const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
 
@@ -97,6 +99,7 @@ export function Calculator() {
         liquidoAPagarTon: precoLiquidoTon,
         freteSaca: tonToSaca(freteValorTon),
         tributosSaca: tonToSaca(totalTributosTon),
+        custoIndustriaSaca: tonToSaca(custoIndustriaTon),
         liquidoFinalSaca: tonToSaca(liquidoFinalTon),
         liquidoFinalTon: liquidoFinalTon,
         liquidoFinalCarga: liquidoFinalTon * 30, // Assumindo 30 tons/carga
@@ -175,7 +178,7 @@ export function Calculator() {
             <CommercialConditionsCard form={form} />
           </div>
           <div className="space-y-6">
-            <TaxesAndSimulationCard results={results} />
+            <TaxesAndSimulationCard form={form} results={results} />
             <ResultsCard results={results} isSimulated={isSimulated} />
           </div>
         </div>

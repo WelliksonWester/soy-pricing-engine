@@ -24,7 +24,7 @@ const ReadonlyInput = ({ label, value, prefix, suffix }: { label: string; value:
   </FormItem>
 );
 
-export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulationCardProps, 'form'> & { form?: UseFormReturn<CalculatorFormValues> }) {
+export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulationCardProps, 'form'> & { form: UseFormReturn<CalculatorFormValues> }) {
   const control = form?.control;
 
   return (
