@@ -43,6 +43,7 @@ const initialResults: ResultsState = {
   freteSaca: 0,
   tributosSaca: 0,
   custoIndustriaSaca: 0,
+  margemSaca: 0,
   liquidoFinalSaca: 0,
   liquidoFinalTon: 0,
   liquidoFinalCarga: 0,
@@ -82,12 +83,14 @@ export function Calculator() {
       const classificacaoValorTon = data.tipoFrete === 'CIF' ? data.valorClassificacao ?? 0 : 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
 
+      const margemValorTon = precoBrutoTon * margemDecimal;
+
       const totalTributosTon = tributoFunruralValorTon;
       const outrosCustosTon = custoIndustriaTon + classificacaoValorTon;
       
       const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
 
-      const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - outrosCustosTon;
+      const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - outrosCustosTon - margemValorTon;
 
       const tonToSaca = (val: number) => val / (1000 / 60);
 
@@ -100,6 +103,7 @@ export function Calculator() {
         freteSaca: tonToSaca(freteValorTon),
         tributosSaca: tonToSaca(totalTributosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),
+        margemSaca: tonToSaca(margemValorTon),
         liquidoFinalSaca: tonToSaca(liquidoFinalTon),
         liquidoFinalTon: liquidoFinalTon,
         liquidoFinalCarga: liquidoFinalTon * 30, // Assumindo 30 tons/carga

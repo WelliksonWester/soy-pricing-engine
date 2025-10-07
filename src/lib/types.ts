@@ -30,6 +30,7 @@ export interface ResultsState {
   freteSaca: number;
   tributosSaca: number;
   custoIndustriaSaca: number;
+  margemSaca: number;
   liquidoFinalSaca: number;
   liquidoFinalTon: number;
   liquidoFinalCarga: number;
