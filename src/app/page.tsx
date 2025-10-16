@@ -55,7 +55,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
-            <Image src="https://i.imgur.com/83D43y9.png" alt="ValorAgro Logo" width={64} height={64} />
+            <Image src="https://i.ibb.co/KpT35Mss/Captura-de-tela-2025-10-16-103235.png" alt="ValorAgro Logo" width={64} height={64} />
           </div>
           <CardTitle className="text-2xl font-bold" style={{ color: '#1E8449' }}>ValorAgro</CardTitle>
           <CardDescription>O cálculo certo para cada saca.</CardDescription>
