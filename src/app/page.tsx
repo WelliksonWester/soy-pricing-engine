@@ -58,7 +58,7 @@ export default function LoginPage() {
             <Warehouse className="h-8 w-8" />
           </div>
           <CardTitle className="text-2xl font-bold">ValorAgro</CardTitle>
-          <CardDescription>ERP de Cálculo de Grãos</CardDescription>
+          <CardDescription>O cálculo certo para cada saca.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

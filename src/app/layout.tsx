@@ -4,7 +4,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'ValorAgro Calculator',
-  description: 'ERP de Cálculo de Grãos',
+  description: 'O cálculo certo para cada saca.',
 };
 
 export default function RootLayout({
