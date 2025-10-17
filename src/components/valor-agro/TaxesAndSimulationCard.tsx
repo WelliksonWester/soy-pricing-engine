@@ -60,9 +60,13 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
             value={results.funruralPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             suffix="%"
           />
+        <ReadonlyInput
+            label="ICMS (%)"
+            value={results.icmsPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            suffix="%"
+        />
+        <ReadonlyInput label="ICMS (R$/saca)" value={formatCurrency(results.icmsSaca)} />
         <ReadonlyInput label="Preço bruto/saca (simulado)" value={formatCurrency(results.precoBrutoSaca)} />
-        <ReadonlyInput label="Preço líquido/saca (simulado)" value={formatCurrency(results.precoLiquidoSaca)} />
-        <ReadonlyInput label="Líquido a pagar/saca (R$)" value={formatCurrency(results.liquidoAPagarSaca)} />
         <ReadonlyInput label="Líquido a pagar/ton (R$)" value={formatCurrency(results.liquidoAPagarTon)} />
       </CardContent>
     </Card>

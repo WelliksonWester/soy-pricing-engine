@@ -37,7 +37,8 @@ const defaultValues: Partial<CalculatorFormValues> = {
 const initialResults: ResultsState = {
   precoBrutoSaca: 0,
   funruralPercentual: 0,
-  precoLiquidoSaca: 0,
+  icmsSaca: 0,
+  icmsPercentual: 0,
   liquidoAPagarSaca: 0,
   liquidoAPagarTon: 0,
   freteSaca: 0,
@@ -48,6 +49,9 @@ const initialResults: ResultsState = {
   liquidoFinalTon: 0,
   liquidoFinalCarga: 0,
 };
+
+const sulSudesteSemES = ['PR', 'RS', 'SC', 'SP', 'RJ', 'MG'];
+const norteNordesteCOComES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'RN', 'RO', 'RR', 'SE', 'TO'];
 
 export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
@@ -77,6 +81,17 @@ export function Calculator() {
 
       const precoBrutoTon = data.precoBase / divisor;
       const funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+      
+      let icmsPercentual = 0;
+      if (data.estadoOrigem === data.estadoDestino) {
+        icmsPercentual = 0;
+      } else if (sulSudesteSemES.includes(data.estadoOrigem) && norteNordesteCOComES.includes(data.estadoDestino)) {
+        icmsPercentual = 7;
+      } else {
+        icmsPercentual = 12;
+      }
+
+      const icmsValorTon = precoBrutoTon * (icmsPercentual / 100);
       const tributoFunruralValorTon = precoBrutoTon * (funruralPercentual / 100);
 
       const freteValorTon = data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0;
@@ -85,10 +100,10 @@ export function Calculator() {
 
       const margemValorTon = precoBrutoTon * margemDecimal;
 
-      const totalTributosTon = tributoFunruralValorTon;
+      const totalTributosTon = tributoFunruralValorTon + icmsValorTon;
       const outrosCustosTon = custoIndustriaTon + classificacaoValorTon;
       
-      const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
+      const precoLiquidoTon = precoBrutoTon - totalTributosTon;
 
       const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - outrosCustosTon - margemValorTon;
 
@@ -97,7 +112,8 @@ export function Calculator() {
       setResults({
         precoBrutoSaca: tonToSaca(precoBrutoTon),
         funruralPercentual,
-        precoLiquidoSaca: tonToSaca(precoLiquidoTon),
+        icmsSaca: tonToSaca(icmsValorTon),
+        icmsPercentual,
         liquidoAPagarSaca: tonToSaca(precoLiquidoTon),
         liquidoAPagarTon: precoLiquidoTon,
         freteSaca: tonToSaca(freteValorTon),

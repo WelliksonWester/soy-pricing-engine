@@ -24,7 +24,8 @@ export type CalculatorFormValues = z.infer<typeof calculatorSchema>;
 export interface ResultsState {
   precoBrutoSaca: number;
   funruralPercentual: number;
-  precoLiquidoSaca: number;
+  icmsSaca: number;
+  icmsPercentual: number;
   liquidoAPagarSaca: number;
   liquidoAPagarTon: number;
   freteSaca: number;

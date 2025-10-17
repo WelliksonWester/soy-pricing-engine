@@ -17,6 +17,15 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
   const { control, watch, setValue } = form;
   const tipoOperacao = watch('tipoOperacao');
   const tipoVendedor = watch('tipoVendedor');
+  const estadoOrigem = watch('estadoOrigem');
+  const estadoDestino = watch('estadoDestino');
+
+  useEffect(() => {
+    if (tipoOperacao === 'Intraestadual' && estadoOrigem !== estadoDestino) {
+        setValue('estadoDestino', estadoOrigem);
+    }
+  }, [tipoOperacao, estadoOrigem, estadoDestino, setValue]);
+
 
   useEffect(() => {
     let cfop = '';
@@ -136,7 +145,7 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado Destino</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={tipoOperacao === 'Intraestadual'}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o estado" />
