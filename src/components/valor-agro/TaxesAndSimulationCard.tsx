@@ -25,7 +25,8 @@ const ReadonlyInput = ({ label, value, prefix, suffix }: { label: string; value:
 );
 
 export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulationCardProps, 'form'> & { form: UseFormReturn<CalculatorFormValues> }) {
-  const control = form?.control;
+  const { control, watch } = form;
+  const tipoVendedor = watch('tipoVendedor');
 
   return (
     <Card>
@@ -40,7 +41,11 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Optante pelo Funrural</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={tipoVendedor === 'Comerciante'}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a opção" />
@@ -65,7 +70,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
             value={results.icmsPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             suffix="%"
         />
-        <ReadonlyInput label="ICMS (R$/saca)" value={formatCurrency(results.icmsSaca)} />
+        <ReadonlyInput label="ICMS" value={formatCurrency(results.icmsSaca)} />
         <ReadonlyInput label="Preço bruto/saca (R$)" value={formatCurrency(results.precoBrutoSaca)} />
         <ReadonlyInput label="Preço líquido/saca (R$)" value={formatCurrency(results.precoLiquidoSaca)} />
       </CardContent>

@@ -80,7 +80,7 @@ export function Calculator() {
       }
 
       const precoBrutoTon = data.precoBase / divisor;
-      const funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+      const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
       
       let icmsPercentual = 0;
       if (data.estadoOrigem === data.estadoDestino) {
