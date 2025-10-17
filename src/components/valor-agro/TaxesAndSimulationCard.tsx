@@ -31,7 +31,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tributos e Simulação</CardTitle>
+        <CardTitle>Impostos</CardTitle>
       </CardHeader>
       <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {control && (
