@@ -56,7 +56,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
           />
         )}
          <ReadonlyInput
-            label="Tributo Funrural (%)"
+            label="Funrural (%)"
             value={results.funruralPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             suffix="%"
           />
