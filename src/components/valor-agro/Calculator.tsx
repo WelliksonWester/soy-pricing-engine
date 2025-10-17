@@ -24,7 +24,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
   estadoDestino: 'PR',
   precoBase: undefined,
   custoIndustria: 0,
-  tipoFrete: 'FOB',
+  tipoFrete: 'CIF',
   frete: 0,
   distancia: 0,
   classificacao: 'Destino',
@@ -39,7 +39,7 @@ const initialResults: ResultsState = {
   funruralPercentual: 0,
   icmsSaca: 0,
   icmsPercentual: 0,
-  liquidoAPagarSaca: 0,
+  precoLiquidoSaca: 0,
   liquidoAPagarTon: 0,
   freteSaca: 0,
   tributosSaca: 0,
@@ -94,6 +94,8 @@ export function Calculator() {
       const icmsValorTon = precoBrutoTon * (icmsPercentual / 100);
       const tributoFunruralValorTon = precoBrutoTon * (funruralPercentual / 100);
 
+      const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
+
       const freteValorTon = data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0;
       const classificacaoValorTon = data.tipoFrete === 'CIF' ? data.valorClassificacao ?? 0 : 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
@@ -103,7 +105,7 @@ export function Calculator() {
       const totalTributosTon = tributoFunruralValorTon + icmsValorTon;
       const outrosCustosTon = custoIndustriaTon + classificacaoValorTon;
       
-      const precoLiquidoTon = precoBrutoTon - totalTributosTon;
+      const liquidoAPagarTon = precoBrutoTon - totalTributosTon;
 
       const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - outrosCustosTon - margemValorTon;
 
@@ -114,8 +116,8 @@ export function Calculator() {
         funruralPercentual,
         icmsSaca: tonToSaca(icmsValorTon),
         icmsPercentual,
-        liquidoAPagarSaca: tonToSaca(precoLiquidoTon),
-        liquidoAPagarTon: precoLiquidoTon,
+        precoLiquidoSaca: tonToSaca(precoLiquidoTon),
+        liquidoAPagarTon: liquidoAPagarTon,
         freteSaca: tonToSaca(freteValorTon),
         tributosSaca: tonToSaca(totalTributosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),

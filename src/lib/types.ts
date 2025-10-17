@@ -26,7 +26,7 @@ export interface ResultsState {
   funruralPercentual: number;
   icmsSaca: number;
   icmsPercentual: number;
-  liquidoAPagarSaca: number;
+  precoLiquidoSaca: number;
   liquidoAPagarTon: number;
   freteSaca: number;
   tributosSaca: number;
