@@ -18,13 +18,14 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
   const tipoOperacao = watch('tipoOperacao');
   const tipoVendedor = watch('tipoVendedor');
   const estadoOrigem = watch('estadoOrigem');
-  const estadoDestino = watch('estadoDestino');
+
+  const isInterestadual = tipoOperacao === 'Interestadual';
 
   useEffect(() => {
-    if (tipoOperacao === 'Intraestadual' && estadoOrigem !== estadoDestino) {
-        setValue('estadoDestino', estadoOrigem);
+    if (!isInterestadual) {
+      setValue('estadoDestino', estadoOrigem);
     }
-  }, [tipoOperacao, estadoOrigem, setValue]);
+  }, [isInterestadual, estadoOrigem, setValue]);
 
 
   useEffect(() => {
@@ -123,7 +124,7 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado Origem</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isInterestadual}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o estado" />
@@ -145,7 +146,7 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado Destino</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select onValueChange={field.onChange} value={field.value} disabled={!isInterestadual}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o estado" />
