@@ -24,7 +24,7 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
     if (tipoOperacao === 'Intraestadual' && estadoOrigem !== estadoDestino) {
         setValue('estadoDestino', estadoOrigem);
     }
-  }, [tipoOperacao, estadoOrigem, estadoDestino, setValue]);
+  }, [tipoOperacao, estadoOrigem, setValue]);
 
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado Destino</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={tipoOperacao === 'Intraestadual'}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o estado" />
