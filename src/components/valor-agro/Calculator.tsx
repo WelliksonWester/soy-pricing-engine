@@ -220,7 +220,7 @@ export function Calculator() {
           </Button>
           <Button type="button" variant="outline" onClick={() => setIsCfopDialogOpen(true)}>
             <FileText />
-            Gerar Nota/CFOP
+            Gerar Modelo de Nota Fiscal
           </Button>
         </div>
       </form>
