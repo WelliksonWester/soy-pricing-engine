@@ -145,7 +145,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
               name="financeiro"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Financeiro</FormLabel>
+                  <FormLabel>Financeiro | Qntd dias</FormLabel>
                   <FormControl>
                     <NumericInput field={field} suffix="dias" noStep />
                   </FormControl>
