@@ -14,12 +14,12 @@ interface CommercialConditionsCardProps {
   form: UseFormReturn<CalculatorFormValues>;
 }
 
-const NumericInput = ({ field, prefix, suffix, ...props }: any) => (
+const NumericInput = ({ field, prefix, suffix, noStep, ...props }: any) => (
   <div className="relative">
     {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{prefix}</span>}
     <Input
       type="number"
-      step="0.01"
+      step={noStep ? undefined : "0.01"}
       {...field}
       {...props}
       className={cn(prefix ? 'pl-9' : 'pr-9')}
@@ -147,7 +147,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 <FormItem>
                   <FormLabel>Financeiro</FormLabel>
                   <FormControl>
-                    <NumericInput field={field} suffix="dias" />
+                    <NumericInput field={field} suffix="dias" noStep />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

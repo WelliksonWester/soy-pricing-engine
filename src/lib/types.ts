@@ -13,7 +13,7 @@ export const calculatorSchema = z.object({
   freteOleo: z.coerce.number({ required_error: 'Frete do óleo é obrigatório.' }).min(0, 'Frete não pode ser negativo.'),
   precoBase: z.coerce.number({ required_error: 'Preço base é obrigatório.' }).min(0.01, 'Preço base deve ser maior que zero.'),
   custoIndustria: z.coerce.number().optional().default(0),
-  financeiro: z.coerce.number().optional().default(0),
+  financeiro: z.coerce.number().int('Financeiro deve ser um número inteiro.').optional().default(0),
   tipoFrete: z.enum(['CIF', 'FOB']),
   frete: z.coerce.number().optional().default(0),
   distancia: z.coerce.number().optional().default(0),
