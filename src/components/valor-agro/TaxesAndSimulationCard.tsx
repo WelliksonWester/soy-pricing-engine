@@ -61,7 +61,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
           />
         )}
          <ReadonlyInput
-            label="Funrural (%)"
+            label="Funrural | Gilrat | Senar (%)"
             value={results.funruralPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             suffix="%"
           />
