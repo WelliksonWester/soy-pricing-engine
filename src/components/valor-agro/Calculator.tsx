@@ -28,6 +28,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
   freteOleo: 0,
   precoBase: 0,
   custoIndustria: 0,
+  financeiro: 0,
   tipoFrete: 'CIF',
   frete: 0,
   distancia: 0,

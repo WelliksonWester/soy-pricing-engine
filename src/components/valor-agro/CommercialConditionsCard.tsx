@@ -142,6 +142,19 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             />
             <FormField
               control={control}
+              name="financeiro"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Financeiro</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} suffix="dias" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
               name="custoIndustria"
               render={({ field }) => (
                 <FormItem>
