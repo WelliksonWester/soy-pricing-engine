@@ -188,7 +188,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
               name="frete"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frete (R$/ton)</FormLabel>
+                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
                   <FormControl>
                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
                   </FormControl>
