@@ -127,11 +127,11 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!isInterestadual}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o estado" />
+                    <SelectValue placeholder={!isInterestadual ? '-' : 'Selecione o estado'} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {UFS.map((uf) => (
+                  {isInterestadual && UFS.map((uf) => (
                     <SelectItem key={uf} value={uf}>{uf}</SelectItem>
                   ))}
                 </SelectContent>
@@ -149,11 +149,11 @@ export function OperationDataCard({ form }: OperationDataCardProps) {
               <Select onValueChange={field.onChange} value={field.value} disabled={!isInterestadual}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o estado" />
+                    <SelectValue placeholder={!isInterestadual ? '-' : 'Selecione o estado'} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {UFS.map((uf) => (
+                  {isInterestadual && UFS.map((uf) => (
                     <SelectItem key={uf} value={uf}>{uf}</SelectItem>
                   ))}
                 </SelectContent>
