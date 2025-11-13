@@ -63,15 +63,15 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
         <CardTitle>Condições Comerciais</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-4 rounded-md border p-4">
-           <CardDescription>Farelo</CardDescription>
+        <div className="space-y-2">
+           <p className="text-sm font-medium">Farelo</p>
            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={control}
               name="precoFarelo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço Base (R$/ton)</FormLabel>
+                  <FormLabel>Preço Farelo (R$/ton)</FormLabel>
                   <FormControl>
                     <NumericInput field={field} prefix="R$" />
                   </FormControl>
@@ -94,15 +94,15 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             />
            </div>
         </div>
-        <div className="space-y-4 rounded-md border p-4">
-           <CardDescription>Óleo</CardDescription>
+        <div className="space-y-2">
+           <p className="text-sm font-medium">Óleo</p>
            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField
               control={control}
               name="precoOleo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço Base (R$/ton)</FormLabel>
+                  <FormLabel>Preço Óleo (R$/ton)</FormLabel>
                   <FormControl>
                     <NumericInput field={field} prefix="R$" />
                   </FormControl>
