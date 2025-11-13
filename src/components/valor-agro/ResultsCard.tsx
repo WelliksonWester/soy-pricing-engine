@@ -41,6 +41,8 @@ export function ResultsCard({ results, isSimulated }: ResultsCardProps) {
     tributosSaca,
     custoIndustriaSaca,
     classificacaoSaca,
+    margemSaca,
+    comissaoSaca,
     liquidoFinalSaca,
     liquidoFinalTon,
     liquidoFinalCarga
@@ -65,9 +67,12 @@ export function ResultsCard({ results, isSimulated }: ResultsCardProps) {
           <h3 className="font-semibold">Resumo do Custo e Líquido</h3>
            <div className="flex flex-col space-y-2 rounded-md bg-accent/30 p-4">
             <SummaryRow label="Preço Bruto" value={formatCurrency(precoBrutoSaca)} />
-            <SummaryRow label="- Frete" value={formatCurrency(freteSaca)} />
+            <SummaryRow label="- Frete Soja" value={formatCurrency(freteSaca)} />
+            <SummaryRow label="- Tributos/saca" value={formatCurrency(tributosSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
             <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
+            <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
+            <SummaryRow label="- Comissão" value={formatCurrency(comissaoSaca)} />
             <SummaryRow label="= Líquido Final/saca" value={formatCurrency(liquidoFinalSaca)} isTotal={true}/>
            </div>
         </div>

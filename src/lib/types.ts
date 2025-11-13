@@ -38,6 +38,7 @@ export interface ResultsState {
   custoIndustriaSaca: number;
   classificacaoSaca: number;
   margemSaca: number;
+  comissaoSaca: number;
   liquidoFinalSaca: number;
   liquidoFinalTon: number;
   liquidoFinalCarga: number;
