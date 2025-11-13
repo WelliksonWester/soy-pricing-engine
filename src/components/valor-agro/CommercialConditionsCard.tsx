@@ -182,13 +182,13 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                         <FormControl>
                           <RadioGroupItem value="CIF" />
                         </FormControl>
-                        <FormLabel className="font-normal">FOB</FormLabel>
+                        <FormLabel className="font-normal">CIF</FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-2 space-y-0">
                         <FormControl>
                           <RadioGroupItem value="FOB" />
                         </FormControl>
-                        <FormLabel className="font-normal">CIF</FormLabel>
+                        <FormLabel className="font-normal">FOB</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>

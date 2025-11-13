@@ -49,6 +49,7 @@ const initialResults: ResultsState = {
   freteSaca: 0,
   tributosSaca: 0,
   custoIndustriaSaca: 0,
+  classificacaoSaca: 0,
   margemSaca: 0,
   liquidoFinalSaca: 0,
   liquidoFinalTon: 0,
@@ -102,7 +103,7 @@ export function Calculator() {
       const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
 
       const freteValorTon = data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0;
-      const classificacaoValorTon = data.tipoFrete === 'CIF' ? data.valorClassificacao ?? 0 : 0;
+      const classificacaoValorTon = data.classificacao === 'Destino' ? 0 : data.valorClassificacao ?? 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
 
       const margemValorTon = precoBrutoTon * margemDecimal;
@@ -126,6 +127,7 @@ export function Calculator() {
         freteSaca: tonToSaca(freteValorTon),
         tributosSaca: tonToSaca(totalTributosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),
+        classificacaoSaca: tonToSaca(classificacaoValorTon),
         margemSaca: tonToSaca(margemValorTon),
         liquidoFinalSaca: tonToSaca(liquidoFinalTon),
         liquidoFinalTon: liquidoFinalTon,

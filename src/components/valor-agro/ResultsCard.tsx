@@ -40,7 +40,7 @@ export function ResultsCard({ results, isSimulated }: ResultsCardProps) {
     freteSaca,
     tributosSaca,
     custoIndustriaSaca,
-    margemSaca,
+    classificacaoSaca,
     liquidoFinalSaca,
     liquidoFinalTon,
     liquidoFinalCarga
@@ -67,9 +67,7 @@ export function ResultsCard({ results, isSimulated }: ResultsCardProps) {
             <SummaryRow label="Preço Bruto" value={formatCurrency(precoBrutoSaca)} />
             <SummaryRow label="- Frete" value={formatCurrency(freteSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
-            <SummaryRow label="- Tributos" value={formatCurrency(tributosSaca)} />
-            <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
-            <Separator className="my-1 bg-accent" />
+            <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
             <SummaryRow label="= Líquido Final/saca" value={formatCurrency(liquidoFinalSaca)} isTotal={true}/>
            </div>
         </div>
