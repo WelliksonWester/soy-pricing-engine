@@ -25,7 +25,7 @@ export default function DashboardPage() {
       </Button>
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">ValorAgro – Calculadora de Preço da Soja</h1>
-        <p className="text-muted-foreground">Simulador para industrialização</p>
+        <p className="text-muted-foreground">Calculadora de custo da soja para indústria</p>
       </header>
       <Calculator />
     </main>
