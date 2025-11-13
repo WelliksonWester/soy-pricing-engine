@@ -2,12 +2,13 @@
 
 import { useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { CalculatorFormValues } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { Separator } from '../ui/separator';
 
 interface CommercialConditionsCardProps {
   form: UseFormReturn<CalculatorFormValues>;
@@ -32,6 +33,19 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const { control, watch, setValue } = form;
   const tipoFrete = watch('tipoFrete');
 
+  const precoFarelo = watch('precoFarelo') ?? 0;
+  const freteFarelo = watch('freteFarelo') ?? 0;
+  const precoOleo = watch('precoOleo') ?? 0;
+  const freteOleo = watch('freteOleo') ?? 0;
+
+  useEffect(() => {
+    const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
+    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
+    const novoPrecoBase = valorFarelo + valorOleo;
+    setValue('precoBase', novoPrecoBase, { shouldValidate: true });
+  }, [precoFarelo, freteFarelo, precoOleo, freteOleo, setValue]);
+
+
   useEffect(() => {
     if (tipoFrete === 'CIF') {
       setValue('classificacao', 'Origem');
@@ -48,159 +62,226 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
       <CardHeader>
         <CardTitle>Condições Comerciais</CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <FormField
-          control={control}
-          name="precoBase"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Preço base (R$/ton) *</FormLabel>
-              <FormControl>
-                <NumericInput field={field} prefix="R$" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="custoIndustria"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Custo Indústria (R$/ton)</FormLabel>
-              <FormControl>
-                <NumericInput field={field} prefix="R$" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="tipoFrete"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Tipo de Frete</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex items-center space-x-4"
-                >
-                  <FormItem className="flex items-center space-x-2 space-y-0">
+      <CardContent className="space-y-4">
+        <div className="space-y-4 rounded-md border p-4">
+           <CardDescription>Farelo</CardDescription>
+           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={control}
+              name="precoFarelo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço Base (R$/ton)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="freteFarelo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frete Farelo</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+           </div>
+        </div>
+        <div className="space-y-4 rounded-md border p-4">
+           <CardDescription>Óleo</CardDescription>
+           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={control}
+              name="precoOleo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço Base (R$/ton)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="freteOleo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frete Óleo</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+           </div>
+        </div>
+        
+        <Separator />
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <FormField
+              control={control}
+              name="precoBase"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Preço base (R$/ton) *</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="custoIndustria"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Custo Indústria (R$/ton)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="tipoFrete"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Tipo de Frete</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex items-center space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="CIF" />
+                        </FormControl>
+                        <FormLabel className="font-normal">FOB</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="FOB" />
+                        </FormControl>
+                        <FormLabel className="font-normal">CIF</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="frete"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frete (R$/ton)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="distancia"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Distância (km)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} suffix="km" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="classificacao"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Classificação</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value}
+                      className="flex items-center space-x-4"
+                      disabled
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Origem" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Origem</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Destino" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Destino</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="valorClassificacao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
+                  <FormControl>
+                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={control}
+                name="margem"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Margem (%) *</FormLabel>
                     <FormControl>
-                      <RadioGroupItem value="CIF" />
+                       <NumericInput field={field} suffix="%" />
                     </FormControl>
-                    <FormLabel className="font-normal">FOB</FormLabel>
+                    <FormMessage />
                   </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
+                )}
+              />
+              <FormField
+                control={control}
+                name="comissao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Comissão (%) *</FormLabel>
                     <FormControl>
-                      <RadioGroupItem value="FOB" />
+                       <NumericInput field={field} suffix="%" />
                     </FormControl>
-                    <FormLabel className="font-normal">CIF</FormLabel>
+                    <FormMessage />
                   </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="frete"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Frete (R$/ton)</FormLabel>
-              <FormControl>
-                <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="distancia"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Distância (km)</FormLabel>
-              <FormControl>
-                <NumericInput field={field} suffix="km" disabled={tipoFrete !== 'CIF'} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="classificacao"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>Classificação</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  value={field.value}
-                  className="flex items-center space-x-4"
-                  disabled
-                >
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Origem" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Origem</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem value="Destino" />
-                    </FormControl>
-                    <FormLabel className="font-normal">Destino</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="valorClassificacao"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Valor Classificação (R$/ton)</FormLabel>
-              <FormControl>
-                 <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="margem"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Margem (%) *</FormLabel>
-                <FormControl>
-                   <NumericInput field={field} suffix="%" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name="comissao"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Comissão (%) *</FormLabel>
-                <FormControl>
-                   <NumericInput field={field} suffix="%" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                )}
+              />
+            </div>
         </div>
       </CardContent>
     </Card>
