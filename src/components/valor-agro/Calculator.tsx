@@ -30,6 +30,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
   precoBase: 0,
   custoIndustria: 0,
   financeiro: 0,
+  custoFinanceiro: 0,
   tipoFrete: 'CIF',
   frete: 0,
   classificacao: 'Destino',
@@ -86,8 +87,7 @@ export function Calculator() {
         return;
       }
       
-      const custoFinanceiroPercentual = (data.financeiro ?? 0) * 0.0833 / 100;
-      const precoBaseComFinanceiro = data.precoBase * (1 + custoFinanceiroPercentual);
+      const precoBaseComFinanceiro = data.precoBase + (data.custoFinanceiro ?? 0);
 
       const precoBrutoTon = precoBaseComFinanceiro / divisor;
       const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
@@ -245,5 +245,3 @@ export function Calculator() {
     </Form>
   );
 }
-
-    

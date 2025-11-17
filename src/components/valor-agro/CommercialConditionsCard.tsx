@@ -38,6 +38,8 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const precoOleo = watch('precoOleo') ?? 0;
   const freteOleo = watch('freteOleo') ?? 0;
   const icmsOleo = watch('icmsOleo') ?? 0;
+  const precoBase = watch('precoBase') ?? 0;
+  const financeiroDias = watch('financeiro') ?? 0;
 
 
   useEffect(() => {
@@ -46,6 +48,12 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
     const novoPrecoBase = valorFarelo + valorOleo;
     setValue('precoBase', novoPrecoBase, { shouldValidate: true });
   }, [precoFarelo, freteFarelo, precoOleo, freteOleo, icmsOleo, setValue]);
+  
+  useEffect(() => {
+    const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;
+    const custoFinanceiroValor = precoBase * custoFinanceiroPercentual;
+    setValue('custoFinanceiro', custoFinanceiroValor, { shouldValidate: true });
+  }, [precoBase, financeiroDias, setValue]);
 
 
   useEffect(() => {
@@ -141,19 +149,34 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 </FormItem>
               )}
             />
-            <FormField
-              control={control}
-              name="financeiro"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Financeiro | Qntd dias</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} suffix="dias" noStep />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={control}
+                name="financeiro"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Financeiro | Qntd dias</FormLabel>
+                    <FormControl>
+                      <NumericInput field={field} suffix="dias" noStep />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={control}
+                name="custoFinanceiro"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Custo Financeiro (R$)</FormLabel>
+                    <FormControl>
+                      <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={control}
               name="custoIndustria"
