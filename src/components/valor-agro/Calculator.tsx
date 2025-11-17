@@ -215,7 +215,7 @@ export function Calculator() {
           </div>
           <div className="space-y-6">
             <TaxesAndSimulationCard form={form} results={results} />
-            <ResultsCard results={results} isSimulated={isSimulated} />
+            {isSimulated && <ResultsCard results={results} />}
           </div>
         </div>
 

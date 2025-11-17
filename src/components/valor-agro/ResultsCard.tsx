@@ -7,7 +7,6 @@ import type { ResultsState } from '@/lib/types';
 
 interface ResultsCardProps {
   results: ResultsState;
-  isSimulated: boolean;
 }
 
 const ResultRow = ({ label, value }: { label: string; value: string }) => (
@@ -24,17 +23,7 @@ const SummaryRow = ({ label, value, isTotal = false }: { label: string; value: s
   </div>
 )
 
-export function ResultsCard({ results, isSimulated }: ResultsCardProps) {
-  if (!isSimulated) {
-    return (
-      <Card className="flex h-full items-center justify-center">
-        <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">Os resultados aparecerão aqui após a simulação.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
+export function ResultsCard({ results }: ResultsCardProps) {
   const {
     precoBrutoSaca,
     freteSaca,
