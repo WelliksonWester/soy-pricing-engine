@@ -41,16 +41,16 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const financeiroDias = watch('financeiro') ?? 0;
   
   useEffect(() => {
+    // Calculo do Preço Base
+    const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
+    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
+    const novoPrecoBase = valorFarelo + valorOleo;
+    setValue('precoBase', novoPrecoBase, { shouldValidate: true });
+
     // Calculo do custo ICMS Oleo
     const custoIcmsOleoValor = ((precoOleo - freteOleo) * 0.185) * (icmsOleo / 100);
     const custoIcmsOleoArredondado = parseFloat(custoIcmsOleoValor.toFixed(2));
     setValue('custoIcmsOleo', custoIcmsOleoArredondado, { shouldValidate: true });
-
-    // Calculo do Preço Base
-    const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
-    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
-    const novoPrecoBase = valorFarelo + valorOleo - custoIcmsOleoArredondado;
-    setValue('precoBase', novoPrecoBase, { shouldValidate: true });
 
     // Calculo do Custo Financeiro
     const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;

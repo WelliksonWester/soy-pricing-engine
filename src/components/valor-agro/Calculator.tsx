@@ -118,7 +118,8 @@ export function Calculator() {
       
       const liquidoAPagarTon = precoBrutoTon - totalTributosTon;
 
-      const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon;
+      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
+      const liquidoFinalTon = precoBrutoTon - freteValorTon - totalTributosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon;
 
       const tonToSaca = (val: number) => val / (1000 / 60);
 
