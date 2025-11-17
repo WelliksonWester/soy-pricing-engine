@@ -85,8 +85,11 @@ export function Calculator() {
         });
         return;
       }
+      
+      const custoFinanceiroPercentual = (data.financeiro ?? 0) * 0.0833 / 100;
+      const precoBaseComFinanceiro = data.precoBase * (1 + custoFinanceiroPercentual);
 
-      const precoBrutoTon = data.precoBase / divisor;
+      const precoBrutoTon = precoBaseComFinanceiro / divisor;
       const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
       
       let icmsPercentual = 0;
