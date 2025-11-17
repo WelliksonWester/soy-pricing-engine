@@ -225,49 +225,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             </div>
             <FormField
               control={control}
-              name="valorClassificacao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
-                  <FormControl>
-                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="classificacao"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Classificação</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      value={field.value}
-                      className="flex items-center space-x-4"
-                      disabled
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Origem" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Origem</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Destino" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Destino</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
               name="frete"
               render={({ field }) => (
                 <FormItem>
@@ -302,6 +259,49 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                           <RadioGroupItem value="FOB" />
                         </FormControl>
                         <FormLabel className="font-normal">FOB</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="valorClassificacao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
+                  <FormControl>
+                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="classificacao"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Classificação</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      value={field.value}
+                      className="flex items-center space-x-4"
+                      disabled
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Origem" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Origem</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Destino" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Destino</FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
