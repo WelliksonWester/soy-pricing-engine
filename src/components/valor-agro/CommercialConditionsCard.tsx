@@ -44,8 +44,9 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
     // Calculo do Preço Base
     const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
     const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
-    const novoPrecoBase = valorFarelo + valorOleo;
-    setValue('precoBase', novoPrecoBase, { shouldValidate: true });
+    const precoBaseValor = valorFarelo + valorOleo;
+    const precoBaseArredondado = parseFloat(precoBaseValor.toFixed(2));
+    setValue('precoBase', precoBaseArredondado, { shouldValidate: true });
 
     // Calculo do custo ICMS Oleo
     const custoIcmsOleoValor = ((precoOleo - freteOleo) * 0.185) * (icmsOleo / 100);
@@ -54,7 +55,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
 
     // Calculo do Custo Financeiro
     const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;
-    const custoFinanceiroValor = novoPrecoBase * custoFinanceiroPercentual;
+    const custoFinanceiroValor = precoBaseValor * custoFinanceiroPercentual;
     const custoFinanceiroArredondado = parseFloat(custoFinanceiroValor.toFixed(2));
     setValue('custoFinanceiro', custoFinanceiroArredondado, { shouldValidate: true });
     
@@ -148,7 +149,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 <FormItem>
                   <FormLabel>Preço base (R$/ton) *</FormLabel>
                   <FormControl>
-                    <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
+                    <NumericInput field={{...field, value: field.value?.toFixed(2)}} prefix="R$" readOnly disabled className="bg-muted" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
