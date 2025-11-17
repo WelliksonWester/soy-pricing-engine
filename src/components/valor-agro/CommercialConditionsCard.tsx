@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -22,7 +22,7 @@ const NumericInput = ({ field, prefix, suffix, noStep, ...props }: any) => (
       step={noStep ? undefined : "0.01"}
       {...field}
       {...props}
-      className={cn(prefix ? 'pl-9' : 'pr-9')}
+      className={cn(prefix ? 'pl-9' : 'pr-9', suffix ? 'pr-9' : '')}
       onChange={(e) => field.onChange(e.target.value === '' ? undefined : +e.target.value)}
     />
     {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{suffix}</span>}
@@ -37,13 +37,15 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const freteFarelo = watch('freteFarelo') ?? 0;
   const precoOleo = watch('precoOleo') ?? 0;
   const freteOleo = watch('freteOleo') ?? 0;
+  const icmsOleo = watch('icmsOleo') ?? 0;
+
 
   useEffect(() => {
     const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
-    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
+    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185) * (1- (icmsOleo / 100));
     const novoPrecoBase = valorFarelo + valorOleo;
     setValue('precoBase', novoPrecoBase, { shouldValidate: true });
-  }, [precoFarelo, freteFarelo, precoOleo, freteOleo, setValue]);
+  }, [precoFarelo, freteFarelo, precoOleo, freteOleo, icmsOleo, setValue]);
 
 
   useEffect(() => {
@@ -52,7 +54,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
     } else {
       setValue('classificacao', 'Destino');
       setValue('frete', 0);
-      setValue('distancia', 0);
       setValue('valorClassificacao', 0);
     }
   }, [tipoFrete, setValue]);
@@ -166,7 +167,33 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 </FormItem>
               )}
             />
+             <FormField
+                control={control}
+                name="icmsOleo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ICMS Óleo (%)</FormLabel>
+                    <FormControl>
+                      <NumericInput field={field} suffix="%" noStep />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             <FormField
+              control={control}
+              name="frete"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
+                  <FormControl>
+                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
               control={control}
               name="tipoFrete"
               render={({ field }) => (
@@ -191,32 +218,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                         <FormLabel className="font-normal">FOB</FormLabel>
                       </FormItem>
                     </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="frete"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="distancia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Distância (km)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} suffix="km" disabled={tipoFrete !== 'CIF'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
