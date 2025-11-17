@@ -39,18 +39,17 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const freteOleo = watch('freteOleo') ?? 0;
   const icmsOleo = watch('icmsOleo') ?? 0;
   const financeiroDias = watch('financeiro') ?? 0;
-  const precoBase = watch('precoBase') ?? 0;
-
+  
   useEffect(() => {
     const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
     const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185) * (1- (icmsOleo / 100));
     const novoPrecoBase = valorFarelo + valorOleo;
     setValue('precoBase', novoPrecoBase, { shouldValidate: true });
 
-    // Movemos o cálculo do custo financeiro para cá também
     const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;
     const custoFinanceiroValor = novoPrecoBase * custoFinanceiroPercentual;
-    setValue('custoFinanceiro', custoFinanceiroValor, { shouldValidate: true });
+    const custoFinanceiroArredondado = parseFloat(custoFinanceiroValor.toFixed(2));
+    setValue('custoFinanceiro', custoFinanceiroArredondado, { shouldValidate: true });
     
   }, [precoFarelo, freteFarelo, precoOleo, freteOleo, icmsOleo, financeiroDias, setValue]);
 
