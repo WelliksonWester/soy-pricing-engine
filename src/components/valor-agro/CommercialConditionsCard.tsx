@@ -342,3 +342,5 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
     </Card>
   );
 }
+
+    
