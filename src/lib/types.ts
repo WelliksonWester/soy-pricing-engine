@@ -11,7 +11,7 @@ export const calculatorSchema = z.object({
   freteFarelo: z.coerce.number({ required_error: 'Frete do farelo é obrigatório.' }).min(0, 'Frete não pode ser negativo.'),
   precoOleo: z.coerce.number({ required_error: 'Preço do óleo é obrigatório.' }).min(0, 'Preço não pode ser negativo.'),
   freteOleo: z.coerce.number({ required_error: 'Frete do óleo é obrigatório.' }).min(0, 'Frete não pode ser negativo.'),
-  icmsOleo: z.coerce.number({ required_error: 'ICMS Óleo é obrigatório.' }).int('ICMS Óleo deve ser um número inteiro.').min(1, 'ICMS Óleo deve ser no mínimo 1.').max(100, 'ICMS Óleo não pode ser maior que 100.'),
+  icmsOleo: z.coerce.number({ required_error: 'ICMS Óleo é obrigatório.' }).int('ICMS Óleo deve ser um número inteiro.').min(0, 'ICMS Óleo deve ser no mínimo 0.').max(100, 'ICMS Óleo não pode ser maior que 100.'),
   precoBase: z.coerce.number({ required_error: 'Preço base é obrigatório.' }).min(0.01, 'Preço base deve ser maior que zero.'),
   custoIndustria: z.coerce.number().optional().default(0),
   financeiro: z.coerce.number().int('Financeiro deve ser um número inteiro.').optional().default(0),
