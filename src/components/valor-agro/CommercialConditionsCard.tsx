@@ -223,7 +223,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 )}
               />
             </div>
-            <FormField
+             <FormField
               control={control}
               name="frete"
               render={({ field }) => (
@@ -237,6 +237,19 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
               )}
             />
              <FormField
+              control={control}
+              name="valorClassificacao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
+                  <FormControl>
+                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
               control={control}
               name="tipoFrete"
               render={({ field }) => (
@@ -261,19 +274,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                         <FormLabel className="font-normal">FOB</FormLabel>
                       </FormItem>
                     </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="valorClassificacao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
-                  <FormControl>
-                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
