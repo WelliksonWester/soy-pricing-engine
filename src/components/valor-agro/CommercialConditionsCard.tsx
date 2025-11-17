@@ -225,42 +225,12 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             </div>
             <FormField
               control={control}
-              name="frete"
+              name="valorClassificacao"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
+                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
                   <FormControl>
-                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-             <FormField
-              control={control}
-              name="tipoFrete"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Tipo de Frete</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex items-center space-x-4"
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="CIF" />
-                        </FormControl>
-                        <FormLabel className="font-normal">CIF</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="FOB" />
-                        </FormControl>
-                        <FormLabel className="font-normal">FOB</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
+                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -298,12 +268,42 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             />
             <FormField
               control={control}
-              name="valorClassificacao"
+              name="frete"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
+                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
                   <FormControl>
-                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={control}
+              name="tipoFrete"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Tipo de Frete</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex items-center space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="CIF" />
+                        </FormControl>
+                        <FormLabel className="font-normal">CIF</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="FOB" />
+                        </FormControl>
+                        <FormLabel className="font-normal">FOB</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
