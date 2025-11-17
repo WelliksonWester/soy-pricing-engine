@@ -7,7 +7,7 @@ import type { z } from 'zod';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CalculatorIcon, FileDown, FileText, Trash2 } from 'lucide-react';
+import { CalculatorIcon, FileText, Trash2 } from 'lucide-react';
 import { calculatorSchema, type ResultsState, type CalculatorFormValues } from '@/lib/types';
 import { OperationDataCard } from './OperationDataCard';
 import { CommercialConditionsCard } from './CommercialConditionsCard';
@@ -164,7 +164,7 @@ export function Calculator() {
     if (!isSimulated) {
       toast({
         variant: 'destructive',
-        title: 'Sem dados para exportar',
+        title: 'Sem dados para gerar',
         description: 'Por favor, execute uma simulação primeiro.',
       });
       return;
@@ -186,7 +186,7 @@ export function Calculator() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'valor_agro_simulacao.csv');
+    link.setAttribute('download', 'valor_agro_faturamento.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -224,8 +224,8 @@ export function Calculator() {
             Limpar
           </Button>
           <Button type="button" variant="outline" onClick={handleExport}>
-            <FileDown />
-            Exportar p/ Excel
+            <FileText />
+            Gerar IN Faturamento
           </Button>
           <Button type="button" variant="outline" onClick={() => setIsCfopDialogOpen(true)}>
             <FileText />
@@ -242,3 +242,5 @@ export function Calculator() {
     </Form>
   );
 }
+
+    
