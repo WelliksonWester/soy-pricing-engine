@@ -41,11 +41,18 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const financeiroDias = watch('financeiro') ?? 0;
   
   useEffect(() => {
+    // Calculo do custo ICMS Oleo
+    const custoIcmsOleoValor = ((precoOleo - freteOleo) * 0.185) * (icmsOleo / 100);
+    const custoIcmsOleoArredondado = parseFloat(custoIcmsOleoValor.toFixed(2));
+    setValue('custoIcmsOleo', custoIcmsOleoArredondado, { shouldValidate: true });
+
+    // Calculo do Preço Base
     const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
-    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185) * (1- (icmsOleo / 100));
-    const novoPrecoBase = valorFarelo + valorOleo;
+    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
+    const novoPrecoBase = valorFarelo + valorOleo - custoIcmsOleoArredondado;
     setValue('precoBase', novoPrecoBase, { shouldValidate: true });
 
+    // Calculo do Custo Financeiro
     const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;
     const custoFinanceiroValor = novoPrecoBase * custoFinanceiroPercentual;
     const custoFinanceiroArredondado = parseFloat(custoFinanceiroValor.toFixed(2));
@@ -188,7 +195,8 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                 </FormItem>
               )}
             />
-             <FormField
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
                 control={control}
                 name="icmsOleo"
                 render={({ field }) => (
@@ -201,6 +209,20 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                   </FormItem>
                 )}
               />
+               <FormField
+                control={control}
+                name="custoIcmsOleo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Custo ICMS Óleo (R$)</FormLabel>
+                    <FormControl>
+                      <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={control}
               name="frete"

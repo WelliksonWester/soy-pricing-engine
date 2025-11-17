@@ -27,6 +27,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
   precoOleo: 0,
   freteOleo: 0,
   icmsOleo: 0,
+  custoIcmsOleo: 0,
   precoBase: 0,
   custoIndustria: 0,
   financeiro: 0,
