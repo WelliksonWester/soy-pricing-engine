@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -70,7 +71,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
             value={results.icmsPercentual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             suffix="%"
         />
-        <ReadonlyInput label="ICMS" value={formatCurrency(results.icmsSaca)} />
+        <ReadonlyInput label="ICMS (R$)" value={formatCurrency(results.icmsSaca)} />
         <ReadonlyInput label="Preço bruto/saca (R$)" value={formatCurrency(results.precoBrutoSaca)} />
         <ReadonlyInput label="Preço líquido/saca (R$)" value={formatCurrency(results.precoLiquidoSaca)} />
       </CardContent>
