@@ -216,7 +216,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                   <FormItem>
                     <FormLabel>Custo ICMS Óleo (R$)</FormLabel>
                     <FormControl>
-                      <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
+                      <NumericInput field={{...field, value: field.value?.toFixed(2)}} prefix="R$" readOnly disabled className="bg-muted" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -343,4 +343,5 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   );
 }
 
+    
     
