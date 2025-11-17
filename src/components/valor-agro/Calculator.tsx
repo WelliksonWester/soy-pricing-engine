@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { z } from 'zod';
@@ -43,7 +43,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
 
 const initialResults: ResultsState = {
   precoBrutoSaca: 0,
-  funruralPercentual: 0,
+  funruralPercentual: 1.5, // Default for Produtor Rural + Faturamento
   icmsSaca: 0,
   icmsPercentual: 0,
   precoLiquidoSaca: 0,
@@ -73,6 +73,16 @@ export function Calculator() {
     defaultValues,
     mode: 'onChange',
   });
+
+  const tipoVendedor = form.watch('tipoVendedor');
+  const optanteFunrural = form.watch('optanteFunrural');
+
+  useEffect(() => {
+    const funruralPercentual =
+      tipoVendedor === 'Comerciante' ? 0 : optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+    setResults((prev) => ({ ...prev, funruralPercentual }));
+  }, [tipoVendedor, optanteFunrural]);
+
 
   const onSubmit = (data: CalculatorFormValues) => {
     try {
