@@ -41,7 +41,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
   const precoBase = watch('precoBase') ?? 0;
   const financeiroDias = watch('financeiro') ?? 0;
 
-
   useEffect(() => {
     const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
     const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185) * (1- (icmsOleo / 100));
@@ -248,19 +247,6 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
             />
             <FormField
               control={control}
-              name="valorClassificacao"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
-                  <FormControl>
-                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
               name="classificacao"
               render={({ field }) => (
                 <FormItem className="space-y-3">
@@ -284,6 +270,19 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                         <FormLabel className="font-normal">Destino</FormLabel>
                       </FormItem>
                     </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="valorClassificacao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
+                  <FormControl>
+                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
