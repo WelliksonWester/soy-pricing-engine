@@ -59,7 +59,6 @@ export function ResultsCard({ results }: ResultsCardProps) {
            <div className="flex flex-col space-y-2 rounded-md bg-accent/30 p-4">
             <SummaryRow label="Preço Bruto" value={formatCurrency(precoBrutoSaca)} />
             <SummaryRow label="- Frete Soja" value={formatCurrency(freteSaca)} />
-            <SummaryRow label="- Impostos/saca" value={formatCurrency(impostosSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
             <SummaryRow label="- Custo ICMS Óleo" value={formatCurrency(custoIcmsOleoSaca)} />
             <SummaryRow label="- Custo Financeiro" value={formatCurrency(custoFinanceiroSaca)} />
