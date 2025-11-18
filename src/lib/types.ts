@@ -38,6 +38,7 @@ export interface ResultsState {
   freteSaca: number;
   impostosSaca: number;
   custoIndustriaSaca: number;
+  custoIcmsOleoSaca: number;
   classificacaoSaca: number;
   margemSaca: number;
   comissaoSaca: number;

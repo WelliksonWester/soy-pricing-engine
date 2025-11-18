@@ -51,6 +51,7 @@ const initialResults: ResultsState = {
   freteSaca: 0,
   impostosSaca: 0,
   custoIndustriaSaca: 0,
+  custoIcmsOleoSaca: 0,
   classificacaoSaca: 0,
   margemSaca: 0,
   comissaoSaca: 0,
@@ -76,10 +77,13 @@ export function Calculator() {
 
   const tipoVendedor = form.watch('tipoVendedor');
   const optanteFunrural = form.watch('optanteFunrural');
+  const tipoOperacao = form.watch('tipoOperacao');
 
   useEffect(() => {
-    const funruralPercentual =
-      tipoVendedor === 'Comerciante' ? 0 : optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+    let funruralPercentual = 0;
+    if (tipoVendedor === 'Produtor Rural') {
+        funruralPercentual = optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+    }
     setResults((prev) => ({ ...prev, funruralPercentual }));
   }, [tipoVendedor, optanteFunrural]);
 
@@ -88,17 +92,21 @@ export function Calculator() {
     try {
       const precoBaseTon = data.precoBase ?? 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
-      const custoIcmsOleo = data.custoIcmsOleo ?? 0;
+      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
-      const custoFinanceiro = data.custoFinanceiro ?? 0;
-      const margemPercent = data.margem / 100;
+      const custoFinanceiroTon = data.custoFinanceiro ?? 0;
       
-      const intermediateResult = (precoBaseTon - custoIndustriaTon - freteSojaTon - custoFinanceiro - custoIcmsOleo) * 0.06;
-      const precoBrutoSaca = intermediateResult / (1 + margemPercent);
+      const margemPercentual = data.margem / 100;
+      
+      const intermediateResult = (precoBaseTon - custoIndustriaTon - custoIcmsOleoTon - freteSojaTon - custoFinanceiroTon) * 0.06;
+      
+      const precoBrutoSaca = intermediateResult / (1 + margemPercentual);
+      const precoBrutoTon = precoBrutoSaca / 0.06;
 
-      const precoBrutoTon = precoBrutoSaca / 0.06; // Re-calculate bruto/ton for other calculations
-
-      const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
+      let funruralPercentual = 0;
+       if (data.tipoVendedor === 'Produtor Rural') {
+          funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+      }
       
       let icmsPercentual = 0;
       if (data.tipoOperacao === 'Interestadual') {
@@ -117,13 +125,13 @@ export function Calculator() {
 
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
       
-      const margemValorTon = precoBrutoTon * margemPercent;
+      const margemValorTon = precoBrutoSaca * margemPercentual;
       const comissaoDecimal = data.comissao / 100;
       const comissaoValorTon = precoBrutoTon * comissaoDecimal;
       
       const liquidoAPagarTon = precoBrutoTon - totalImpostosTon;
 
-      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleo;
+      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon;
 
       const tonToSaca = (val: number) => val / (1000 / 60);
 
@@ -137,12 +145,13 @@ export function Calculator() {
         freteSaca: tonToSaca(freteSojaTon),
         impostosSaca: tonToSaca(totalImpostosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),
+        custoIcmsOleoSaca: tonToSaca(custoIcmsOleoTon),
         classificacaoSaca: tonToSaca(valorClassificacaoTon),
         margemSaca: tonToSaca(margemValorTon),
         comissaoSaca: tonToSaca(comissaoValorTon),
         liquidoFinalSaca: tonToSaca(liquidoFinalTon),
         liquidoFinalTon: liquidoFinalTon,
-        liquidoFinalCarga: liquidoFinalTon * 30, // Assumindo 30 tons/carga
+        liquidoFinalCarga: liquidoFinalTon * 30,
       });
 
       setIsSimulated(true);

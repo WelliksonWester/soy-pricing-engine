@@ -29,6 +29,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
     freteSaca,
     impostosSaca,
     custoIndustriaSaca,
+    custoIcmsOleoSaca,
     classificacaoSaca,
     margemSaca,
     comissaoSaca,
@@ -59,6 +60,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
             <SummaryRow label="- Frete Soja" value={formatCurrency(freteSaca)} />
             <SummaryRow label="- Impostos/saca" value={formatCurrency(impostosSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
+            <SummaryRow label="- Custo ICMS Óleo" value={formatCurrency(custoIcmsOleoSaca)} />
             <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
             <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
             <SummaryRow label="- Comissão" value={formatCurrency(comissaoSaca)} />
