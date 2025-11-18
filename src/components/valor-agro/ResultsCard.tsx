@@ -65,7 +65,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
             <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
             <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
             <SummaryRow label="- Comissão" value={formatCurrency(comissaoSaca)} />
-            <SummaryRow label="= Líquido Final/saca" value={formatCurrency(liquidoFinalSaca)} isTotal={true}/>
+            <SummaryRow label="Preço Bruto à pagar/saca" value={formatCurrency(liquidoFinalSaca)} isTotal={true}/>
            </div>
         </div>
 
