@@ -64,6 +64,8 @@ const initialResults: ResultsState = {
 const sulSudesteSemES = ['PR', 'RS', 'SC', 'SP', 'RJ', 'MG'];
 const norteNordesteCOComES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'RN', 'RO', 'RR', 'SE', 'TO'];
 
+const tonToSaca60kg = (value: number) => (value / 1000) * 60;
+
 export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
   const [isSimulated, setIsSimulated] = useState(false);
@@ -96,12 +98,23 @@ export function Calculator() {
       const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
       const custoFinanceiroTon = data.custoFinanceiro ?? 0;
-      
-      const margemPercentual = data.margem / 100;
-      
-      const intermediateResult = (precoBaseTon - custoIndustriaTon - custoIcmsOleoTon - freteSojaTon - custoFinanceiroTon) * 0.06;
-      
-      const precoBrutoSaca = intermediateResult / (1 - margemPercentual / 100);
+      const margemDecimal = data.margem / 100;
+      const comissaoDecimal = data.comissao / 100;
+      const valorClassificacaoTon = (data.valorClassificacao ?? 0);
+
+      // Formulas from user
+      const precoBaseSaca = tonToSaca60kg(precoBaseTon);
+      const freteSojaSaca = tonToSaca60kg(freteSojaTon);
+      const custoIndustriaSaca = tonToSaca60kg(custoIndustriaTon);
+      const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleoTon);
+      const custoFinanceiroSaca = tonToSaca60kg(custoFinanceiroTon);
+      const classificacaoSaca = tonToSaca60kg(valorClassificacaoTon);
+
+      // Preço Bruto Calculation
+      const baseParaPrecoBruto = precoBaseTon - custoIndustriaTon - custoIcmsOleoTon - freteSojaTon - custoFinanceiroTon;
+      const precoBrutoIntermediate = baseParaPrecoBruto * 0.06;
+      const precoBrutoSaca = precoBrutoIntermediate / (1 - margemDecimal);
+
       const precoBrutoTon = precoBrutoSaca / 0.06;
 
       let funruralPercentual = 0;
@@ -124,34 +137,30 @@ export function Calculator() {
 
       const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
 
-      const valorClassificacaoTon = (data.valorClassificacao ?? 0);
-      
-      const margemValorTon = precoBrutoSaca * margemPercentual;
-      const comissaoDecimal = data.comissao / 100;
-      const comissaoValorTon = precoBrutoTon * comissaoDecimal;
+      const margemSaca = precoBrutoSaca * margemDecimal;
+      const comissaoSaca = precoBrutoSaca * comissaoDecimal;
       
       const liquidoAPagarTon = precoBrutoTon - totalImpostosTon;
 
-      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon - custoFinanceiroTon;
-
-      const tonToSaca = (val: number) => val / (1000 / 60);
+      const liquidoFinalSaca = precoBrutoSaca - freteSojaSaca - tonToSaca60kg(totalImpostosTon) - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca - margemSaca - comissaoSaca;
+      const liquidoFinalTon = liquidoFinalSaca / 0.06;
 
       setResults({
         precoBrutoSaca: precoBrutoSaca,
         funruralPercentual,
-        icmsSaca: tonToSaca(icmsValorTon),
+        icmsSaca: tonToSaca60kg(icmsValorTon),
         icmsPercentual,
-        precoLiquidoSaca: tonToSaca(precoLiquidoTon),
+        precoLiquidoSaca: precoBrutoSaca - tonToSaca60kg(tributoFunruralValorTon),
         liquidoAPagarTon: liquidoAPagarTon,
-        freteSaca: tonToSaca(freteSojaTon),
-        impostosSaca: tonToSaca(totalImpostosTon),
-        custoIndustriaSaca: tonToSaca(custoIndustriaTon),
-        custoIcmsOleoSaca: tonToSaca(custoIcmsOleoTon),
-        custoFinanceiroSaca: tonToSaca(custoFinanceiroTon),
-        classificacaoSaca: tonToSaca(valorClassificacaoTon),
-        margemSaca: tonToSaca(margemValorTon),
-        comissaoSaca: tonToSaca(comissaoValorTon),
-        liquidoFinalSaca: tonToSaca(liquidoFinalTon),
+        freteSaca: freteSojaSaca,
+        impostosSaca: tonToSaca60kg(totalImpostosTon),
+        custoIndustriaSaca: custoIndustriaSaca,
+        custoIcmsOleoSaca: custoIcmsOleoSaca,
+        custoFinanceiroSaca: custoFinanceiroSaca,
+        classificacaoSaca: classificacaoSaca,
+        margemSaca: margemSaca,
+        comissaoSaca: comissaoSaca,
+        liquidoFinalSaca: liquidoFinalSaca,
         liquidoFinalTon: liquidoFinalTon,
         liquidoFinalCarga: liquidoFinalTon * 30,
       });
@@ -262,3 +271,5 @@ export function Calculator() {
     </Form>
   );
 }
+
+    
