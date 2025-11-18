@@ -86,10 +86,17 @@ export function Calculator() {
 
   const onSubmit = (data: CalculatorFormValues) => {
     try {
-      const precoBase = data.precoBase ?? 0;
+      const precoBaseTon = data.precoBase ?? 0;
+      const custoIndustriaTon = data.custoIndustria ?? 0;
+      const custoIcmsOleo = data.custoIcmsOleo ?? 0;
+      const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
+      const custoFinanceiro = data.custoFinanceiro ?? 0;
+      const margemPercent = data.margem / 100;
       
-      const precoBrutoTon = (precoBase / 1000) * 60;
-      const precoBrutoSaca = precoBrutoTon;
+      const intermediateResult = (precoBaseTon - custoIndustriaTon - custoIcmsOleo - freteSojaTon - custoFinanceiro) * 0.06;
+      const precoBrutoSaca = intermediateResult * (1 - margemPercent);
+
+      const precoBrutoTon = precoBrutoSaca / 0.06; // Re-calculate bruto/ton for other calculations
 
       const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
       
@@ -108,21 +115,15 @@ export function Calculator() {
 
       const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
 
-      const freteValorTon = data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0;
-      const custoIndustriaTon = data.custoIndustria ?? 0;
-      
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
       
-      const margemDecimal = data.margem / 100;
+      const margemValorTon = precoBrutoTon * margemPercent;
       const comissaoDecimal = data.comissao / 100;
-
-      const margemValorTon = precoBrutoTon * margemDecimal;
       const comissaoValorTon = precoBrutoTon * comissaoDecimal;
       
       const liquidoAPagarTon = precoBrutoTon - totalImpostosTon;
 
-      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
-      const liquidoFinalTon = precoBrutoTon - freteValorTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon;
+      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleo;
 
       const tonToSaca = (val: number) => val / (1000 / 60);
 
@@ -133,7 +134,7 @@ export function Calculator() {
         icmsPercentual,
         precoLiquidoSaca: tonToSaca(precoLiquidoTon),
         liquidoAPagarTon: liquidoAPagarTon,
-        freteSaca: tonToSaca(freteValorTon),
+        freteSaca: tonToSaca(freteSojaTon),
         impostosSaca: tonToSaca(totalImpostosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),
         classificacaoSaca: tonToSaca(valorClassificacaoTon),
@@ -250,3 +251,5 @@ export function Calculator() {
     </Form>
   );
 }
+
+    
