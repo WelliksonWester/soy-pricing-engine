@@ -93,8 +93,8 @@ export function Calculator() {
       const custoFinanceiro = data.custoFinanceiro ?? 0;
       const margemPercent = data.margem / 100;
       
-      const intermediateResult = (precoBaseTon - custoIndustriaTon - custoIcmsOleo - freteSojaTon - custoFinanceiro) * 0.06;
-      const precoBrutoSaca = intermediateResult * (1 - margemPercent);
+      const intermediateResult = (precoBaseTon - custoIndustriaTon - freteSojaTon - custoFinanceiro - custoIcmsOleo) * 0.06;
+      const precoBrutoSaca = intermediateResult / (1 + margemPercent);
 
       const precoBrutoTon = precoBrutoSaca / 0.06; // Re-calculate bruto/ton for other calculations
 
@@ -251,5 +251,3 @@ export function Calculator() {
     </Form>
   );
 }
-
-    
