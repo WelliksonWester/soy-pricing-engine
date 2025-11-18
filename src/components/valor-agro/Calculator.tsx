@@ -86,6 +86,8 @@ export function Calculator() {
     let funruralPercentual = 0;
     if (tipoVendedor === 'Produtor Rural') {
         funruralPercentual = optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+    } else {
+        funruralPercentual = 0;
     }
     setResults((prev) => ({ ...prev, funruralPercentual }));
   }, [tipoVendedor, optanteFunrural]);
@@ -93,29 +95,31 @@ export function Calculator() {
 
   const onSubmit = (data: CalculatorFormValues) => {
     try {
+      // Inputs from form (Ton)
       const precoBaseTon = data.precoBase ?? 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
       const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
       const custoFinanceiroTon = data.custoFinanceiro ?? 0;
-      const margemDecimal = data.margem / 100;
-      const comissaoDecimal = data.comissao / 100;
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
 
-      // Formulas from user
-      const freteSojaSaca = tonToSaca60kg(freteSojaTon);
+      // Convert Ton to Saca
+      const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
+      const freteSaca = tonToSaca60kg(freteSojaTon);
       const custoIndustriaSaca = tonToSaca60kg(custoIndustriaTon);
       const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleoTon);
       const custoFinanceiroSaca = tonToSaca60kg(custoFinanceiroTon);
       const classificacaoSaca = tonToSaca60kg(valorClassificacaoTon);
+      
+      // Liquido Final 1
+      const liquidoFinal1 = precoBrutoSaca - freteSaca - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca;
 
-      // Preço Bruto Calculation
-      const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
-
-      const precoBrutoTon = precoBrutoSaca / 0.06;
-
+      // Percentage values from form
+      const margemPercentual = data.margem / 100;
+      const comissaoPercentual = data.comissao / 100;
+      
       let funruralPercentual = 0;
-       if (data.tipoVendedor === 'Produtor Rural') {
+      if (data.tipoVendedor === 'Produtor Rural') {
           funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
       }
       
@@ -128,37 +132,45 @@ export function Calculator() {
         }
       }
 
-      const icmsValorTon = precoBrutoTon * (icmsPercentual / 100);
-      const tributoFunruralValorTon = precoBrutoTon * (funruralPercentual / 100);
-      const totalImpostosTon = tributoFunruralValorTon + icmsValorTon;
+      const funruralDecimal = funruralPercentual / 100;
+      const icmsDecimal = icmsPercentual / 100;
 
-      const precoLiquidoTon = precoBrutoTon - tributoFunruralValorTon;
+      // Calculations based on Liquido Final 1
+      const funruralSaca = liquidoFinal1 * funruralDecimal;
+      const icmsSaca = liquidoFinal1 * icmsDecimal;
+      const impostosSaca = funruralSaca + icmsSaca;
 
-      const margemSaca = precoBrutoSaca * margemDecimal;
-      const comissaoSaca = precoBrutoSaca * comissaoDecimal;
+      const margemSaca = liquidoFinal1 * margemPercentual;
+      const comissaoSaca = liquidoFinal1 * comissaoPercentual;
       
-      const liquidoAPagarTon = precoBrutoTon - totalImpostosTon;
-
-      const liquidoFinalSaca = precoBrutoSaca - freteSojaSaca - tonToSaca60kg(totalImpostosTon) - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca - margemSaca - comissaoSaca;
+      // Final Liquid Calculation
+      const liquidoFinalSaca = liquidoFinal1 - margemSaca - comissaoSaca - impostosSaca;
       const liquidoFinalTon = liquidoFinalSaca / 0.06;
 
+      // Legacy/Display values
+      const precoBrutoTon = precoBaseTon;
+      const tributoFunruralValorTon = precoBrutoTon * funruralDecimal;
+      const icmsValorTon = precoBrutoTon * icmsDecimal;
+      const liquidoAPagarTon = precoBrutoTon - (tributoFunruralValorTon + icmsValorTon);
+      const precoLiquidoSaca = precoBrutoSaca - funruralSaca;
+
       setResults({
-        precoBrutoSaca: precoBrutoSaca,
+        precoBrutoSaca,
         funruralPercentual,
-        icmsSaca: tonToSaca60kg(icmsValorTon),
+        icmsSaca,
         icmsPercentual,
-        precoLiquidoSaca: precoBrutoSaca - tonToSaca60kg(tributoFunruralValorTon),
-        liquidoAPagarTon: liquidoAPagarTon,
-        freteSaca: freteSojaSaca,
-        impostosSaca: tonToSaca60kg(totalImpostosTon),
-        custoIndustriaSaca: custoIndustriaSaca,
-        custoIcmsOleoSaca: custoIcmsOleoSaca,
-        custoFinanceiroSaca: custoFinanceiroSaca,
-        classificacaoSaca: classificacaoSaca,
-        margemSaca: margemSaca,
-        comissaoSaca: comissaoSaca,
-        liquidoFinalSaca: liquidoFinalSaca,
-        liquidoFinalTon: liquidoFinalTon,
+        precoLiquidoSaca,
+        liquidoAPagarTon,
+        freteSaca,
+        impostosSaca,
+        custoIndustriaSaca,
+        custoIcmsOleoSaca,
+        custoFinanceiroSaca,
+        classificacaoSaca,
+        margemSaca,
+        comissaoSaca,
+        liquidoFinalSaca,
+        liquidoFinalTon,
         liquidoFinalCarga: liquidoFinalTon * 30,
       });
 
