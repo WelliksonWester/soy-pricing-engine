@@ -86,21 +86,11 @@ export function Calculator() {
 
   const onSubmit = (data: CalculatorFormValues) => {
     try {
-      const margemDecimal = data.margem / 100;
-      const comissaoDecimal = data.comissao / 100;
-      const divisor = 1 - margemDecimal - comissaoDecimal;
-      if (divisor <= 0) {
-        toast({
-          variant: 'destructive',
-          title: 'Erro de Cálculo',
-          description: 'A soma da Margem e Comissão não pode ser maior ou igual a 100%.',
-        });
-        return;
-      }
+      const precoBase = data.precoBase ?? 0;
       
-      const precoBaseComFinanceiro = data.precoBase + (data.custoFinanceiro ?? 0);
+      const precoBrutoTon = (precoBase / 1000) * 60 * (1000/60); // Mantém a base em Tonelada
+      const precoBrutoSaca = (precoBase / 1000) * 60;
 
-      const precoBrutoTon = precoBaseComFinanceiro / divisor;
       const funruralPercentual = data.tipoVendedor === 'Comerciante' ? 0 : (data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2);
       
       let icmsPercentual = 0;
@@ -123,6 +113,9 @@ export function Calculator() {
       
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
       
+      const margemDecimal = data.margem / 100;
+      const comissaoDecimal = data.comissao / 100;
+
       const margemValorTon = precoBrutoTon * margemDecimal;
       const comissaoValorTon = precoBrutoTon * comissaoDecimal;
       
@@ -134,7 +127,7 @@ export function Calculator() {
       const tonToSaca = (val: number) => val / (1000 / 60);
 
       setResults({
-        precoBrutoSaca: tonToSaca(precoBrutoTon),
+        precoBrutoSaca: precoBrutoSaca,
         funruralPercentual,
         icmsSaca: tonToSaca(icmsValorTon),
         icmsPercentual,
