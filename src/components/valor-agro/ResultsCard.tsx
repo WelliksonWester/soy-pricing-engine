@@ -30,6 +30,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
     impostosSaca,
     custoIndustriaSaca,
     custoIcmsOleoSaca,
+    custoFinanceiroSaca,
     classificacaoSaca,
     margemSaca,
     comissaoSaca,
@@ -61,6 +62,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
             <SummaryRow label="- Impostos/saca" value={formatCurrency(impostosSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
             <SummaryRow label="- Custo ICMS Óleo" value={formatCurrency(custoIcmsOleoSaca)} />
+            <SummaryRow label="- Custo Financeiro" value={formatCurrency(custoFinanceiroSaca)} />
             <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
             <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
             <SummaryRow label="- Comissão" value={formatCurrency(comissaoSaca)} />

@@ -52,6 +52,7 @@ const initialResults: ResultsState = {
   impostosSaca: 0,
   custoIndustriaSaca: 0,
   custoIcmsOleoSaca: 0,
+  custoFinanceiroSaca: 0,
   classificacaoSaca: 0,
   margemSaca: 0,
   comissaoSaca: 0,
@@ -100,7 +101,7 @@ export function Calculator() {
       
       const intermediateResult = (precoBaseTon - custoIndustriaTon - custoIcmsOleoTon - freteSojaTon - custoFinanceiroTon) * 0.06;
       
-      const precoBrutoSaca = intermediateResult / (1 + margemPercentual);
+      const precoBrutoSaca = intermediateResult / (1 - margemPercentual / 100);
       const precoBrutoTon = precoBrutoSaca / 0.06;
 
       let funruralPercentual = 0;
@@ -131,7 +132,7 @@ export function Calculator() {
       
       const liquidoAPagarTon = precoBrutoTon - totalImpostosTon;
 
-      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon;
+      const liquidoFinalTon = precoBrutoTon - freteSojaTon - totalImpostosTon - custoIndustriaTon - valorClassificacaoTon - margemValorTon - comissaoValorTon - custoIcmsOleoTon - custoFinanceiroTon;
 
       const tonToSaca = (val: number) => val / (1000 / 60);
 
@@ -146,6 +147,7 @@ export function Calculator() {
         impostosSaca: tonToSaca(totalImpostosTon),
         custoIndustriaSaca: tonToSaca(custoIndustriaTon),
         custoIcmsOleoSaca: tonToSaca(custoIcmsOleoTon),
+        custoFinanceiroSaca: tonToSaca(custoFinanceiroTon),
         classificacaoSaca: tonToSaca(valorClassificacaoTon),
         margemSaca: tonToSaca(margemValorTon),
         comissaoSaca: tonToSaca(comissaoValorTon),
