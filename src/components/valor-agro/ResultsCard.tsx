@@ -27,7 +27,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
   const {
     precoBrutoSaca,
     freteSaca,
-    tributosSaca,
+    impostosSaca,
     custoIndustriaSaca,
     classificacaoSaca,
     margemSaca,
@@ -47,7 +47,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
         <div className="space-y-2 rounded-lg border p-4">
             <ResultRow label="Preço Bruto/saca" value={formatCurrency(precoBrutoSaca)} />
             <ResultRow label="Frete/saca (se CIF)" value={formatCurrency(freteSaca)} />
-            <ResultRow label="Tributos/saca" value={formatCurrency(tributosSaca)} />
+            <ResultRow label="Impostos/saca" value={formatCurrency(impostosSaca)} />
         </div>
         
         <Separator />
@@ -57,7 +57,7 @@ export function ResultsCard({ results }: ResultsCardProps) {
            <div className="flex flex-col space-y-2 rounded-md bg-accent/30 p-4">
             <SummaryRow label="Preço Bruto" value={formatCurrency(precoBrutoSaca)} />
             <SummaryRow label="- Frete Soja" value={formatCurrency(freteSaca)} />
-            <SummaryRow label="- Tributos/saca" value={formatCurrency(tributosSaca)} />
+            <SummaryRow label="- Impostos/saca" value={formatCurrency(impostosSaca)} />
             <SummaryRow label="- Custo Indústria" value={formatCurrency(custoIndustriaSaca)} />
             <SummaryRow label="- Classificação" value={formatCurrency(classificacaoSaca)} />
             <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />

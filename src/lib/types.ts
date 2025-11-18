@@ -36,7 +36,7 @@ export interface ResultsState {
   precoLiquidoSaca: number;
   liquidoAPagarTon: number;
   freteSaca: number;
-  tributosSaca: number;
+  impostosSaca: number;
   custoIndustriaSaca: number;
   classificacaoSaca: number;
   margemSaca: number;
