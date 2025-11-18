@@ -103,7 +103,6 @@ export function Calculator() {
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
 
       // Formulas from user
-      const precoBaseSaca = tonToSaca60kg(precoBaseTon);
       const freteSojaSaca = tonToSaca60kg(freteSojaTon);
       const custoIndustriaSaca = tonToSaca60kg(custoIndustriaTon);
       const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleoTon);
@@ -111,9 +110,7 @@ export function Calculator() {
       const classificacaoSaca = tonToSaca60kg(valorClassificacaoTon);
 
       // Preço Bruto Calculation
-      const baseParaPrecoBruto = precoBaseTon - custoIndustriaTon - custoIcmsOleoTon - freteSojaTon - custoFinanceiroTon;
-      const precoBrutoIntermediate = baseParaPrecoBruto * 0.06;
-      const precoBrutoSaca = precoBrutoIntermediate / (1 - margemDecimal);
+      const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
 
       const precoBrutoTon = precoBrutoSaca / 0.06;
 
