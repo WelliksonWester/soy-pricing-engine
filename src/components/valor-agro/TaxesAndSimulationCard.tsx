@@ -72,7 +72,7 @@ export function TaxesAndSimulationCard({ form, results }: Omit<TaxesAndSimulatio
             suffix="%"
         />
         <ReadonlyInput label="ICMS (R$)" value={formatCurrency(results.icmsSaca)} />
-        <ReadonlyInput label="Preço bruto/saca (R$)" value={formatCurrency(results.precoBrutoSaca)} />
+        <ReadonlyInput label="Custo Bruto/Saca (R$)" value={formatCurrency(results.precoBrutoSaca)} />
         <ReadonlyInput label="Preço líquido/saca (R$)" value={formatCurrency(results.precoLiquidoSaca)} />
       </CardContent>
     </Card>
