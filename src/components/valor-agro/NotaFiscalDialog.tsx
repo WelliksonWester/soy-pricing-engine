@@ -151,7 +151,7 @@ export function NotaFiscalDialog({ isOpen, onOpenChange, formValues, results }: 
                 </tr>
 
                  {/* Empty rows */}
-                 {Array.from({ length M: 9 }).map((_, i) => <tr key={`empty-bottom-${i}`}><Cell colSpan={13} className="h-4"></Cell></tr>)}
+                 {Array.from({ length: 9 }).map((_, i) => <tr key={`empty-bottom-${i}`}><Cell colSpan={13} className="h-4"></Cell></tr>)}
                 </tbody>
             </table>
             </div>
