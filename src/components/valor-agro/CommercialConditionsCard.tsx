@@ -204,7 +204,7 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
                   <FormItem>
                     <FormLabel>ICMS Óleo (%)</FormLabel>
                     <FormControl>
-                      <NumericInput field={field} suffix="%" noStep />
+                      <NumericInput field={field} suffix="%" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

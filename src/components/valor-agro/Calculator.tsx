@@ -13,7 +13,6 @@ import { OperationDataCard } from './OperationDataCard';
 import { CommercialConditionsCard } from './CommercialConditionsCard';
 import { TaxesAndSimulationCard } from './TaxesAndSimulationCard';
 import { ResultsCard } from './ResultsCard';
-import { CfopDialog } from './CfopDialog';
 import { FaturamentoDialog } from './FaturamentoDialog';
 import { NotaFiscalDialog } from './NotaFiscalDialog';
 
@@ -70,7 +69,6 @@ const norteNordesteCOComES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'G
 export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
   const [isSimulated, setIsSimulated] = useState(false);
-  const [isCfopDialogOpen, setIsCfopDialogOpen] = useState(false);
   const [isFaturamentoDialogOpen, setIsFaturamentoDialogOpen] = useState(false);
   const [isNotaFiscalDialogOpen, setIsNotaFiscalDialogOpen] = useState(false);
   const { toast } = useToast();
@@ -123,6 +121,15 @@ export function Calculator() {
       const margemPercentual = data.margem / 100;
       const comissaoPercentual = data.comissao / 100;
       
+      const calcMargem = 100 - data.margem;
+      const margemSaca = precoBruto1 * (1 - (calcMargem/100));
+
+      const calcComissao = 100 - data.comissao;
+      const comissaoSaca = precoBruto1 * (1 - (calcComissao/100));
+      
+      // Preço Bruto à Pagar
+      const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; 
+
       let funruralPercentual = 0;
       if (data.tipoVendedor === 'Produtor Rural') {
           funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
@@ -139,13 +146,6 @@ export function Calculator() {
 
       const funruralDecimal = funruralPercentual / 100;
       const icmsDecimal = icmsPercentual / 100;
-      
-      // Margem e comissão são calculados sobre o preço bruto 1
-      const margemSaca = precoBruto1 * margemPercentual;
-      const comissaoSaca = precoBruto1 * comissaoPercentual;
-      
-      // Preço Bruto à Pagar
-      const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; 
 
       // Impostos
       const icmsSaca = liquidoFinalSaca * icmsDecimal;
@@ -154,19 +154,16 @@ export function Calculator() {
       
       // Preço Líquido
       const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
-      const liquidoFinalTon = precoLiquidoFinalSaca / 0.06;
+      const liquidoFinalTon = precoLiquidoFinalSaca > 0 ? (precoLiquidoFinalSaca / 60) * 1000 : 0;
 
-      // Old values for display compatibility
-      const precoLiquidoSaca = precoBrutoSaca - impostosSaca;
-      const liquidoAPagarTon = precoLiquidoFinalSaca / 0.06; 
 
       setResults({
         precoBrutoSaca,
         funruralPercentual,
         icmsSaca,
         icmsPercentual,
-        precoLiquidoSaca,
-        liquidoAPagarTon,
+        precoLiquidoSaca: liquidoFinalSaca,
+        liquidoAPagarTon: liquidoFinalTon,
         freteSaca,
         impostosSaca,
         custoIndustriaSaca,
