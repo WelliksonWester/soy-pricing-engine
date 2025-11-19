@@ -14,6 +14,7 @@ import { CommercialConditionsCard } from './CommercialConditionsCard';
 import { TaxesAndSimulationCard } from './TaxesAndSimulationCard';
 import { ResultsCard } from './ResultsCard';
 import { CfopDialog } from './CfopDialog';
+import { FaturamentoDialog } from './FaturamentoDialog';
 
 const defaultValues: Partial<CalculatorFormValues> = {
   tipoOperacao: 'Intraestadual',
@@ -71,6 +72,7 @@ export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
   const [isSimulated, setIsSimulated] = useState(false);
   const [isCfopDialogOpen, setIsCfopDialogOpen] = useState(false);
+  const [isFaturamentoDialogOpen, setIsFaturamentoDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<CalculatorFormValues>({
@@ -106,15 +108,14 @@ export function Calculator() {
       const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const custoFinanceiroTon = data.custoFinanceiro ?? 0;
       
-      // Convert Ton to Saca
-      const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
-      const freteSaca = tonToSaca60kg(freteSojaTon);
-      const custoIndustriaSaca = tonToSaca60kg(custoIndustriaTon);
-      const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleoTon);
-      const custoFinanceiroSaca = tonToSaca60kg(custoFinanceiroTon);
-      const classificacaoSaca = tonToSaca60kg(valorClassificacaoTon);
+      const precoBrutoSaca = (precoBaseTon / 1000) * 60;
+      const freteSaca = (freteSojaTon / 1000) * 60;
+      const custoIndustriaSaca = (custoIndustriaTon / 1000) * 60;
+      const custoIcmsOleoSaca = (custoIcmsOleoTon / 1000) * 60;
+      const custoFinanceiroSaca = (custoFinanceiroTon / 1000) * 60;
+      const classificacaoSaca = (valorClassificacaoTon / 1000) * 60;
       
-      // Preço Bruto 1
+      // Preço Bruto 1 (ou Liquido Final 1)
       const precoBruto1 = precoBrutoSaca - freteSaca - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca;
 
       // Percentage values from form
@@ -142,19 +143,17 @@ export function Calculator() {
       const margemSaca = precoBruto1 * margemPercentual;
       const comissaoSaca = precoBruto1 * comissaoPercentual;
       
-      // Final Liquid Calculation
       const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; // This is 'Preço Bruto à pagar/saca'
 
-      const funruralSaca = liquidoFinalSaca * funruralDecimal;
       const icmsSaca = liquidoFinalSaca * icmsDecimal;
+      const funruralSaca = liquidoFinalSaca * funruralDecimal;
       const impostosSaca = funruralSaca + icmsSaca;
 
       const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
       const liquidoFinalTon = precoLiquidoFinalSaca / 0.06;
 
-      // Legacy/Display values
-      const precoLiquidoSaca = precoBrutoSaca - impostosSaca; // Adjusted this line to use the final tax value
-      const liquidoAPagarTon = precoLiquidoFinalSaca / 0.06; // Adjusted to be consistent
+      const precoLiquidoSaca = precoBrutoSaca - impostosSaca;
+      const liquidoAPagarTon = precoLiquidoFinalSaca / 0.06; 
 
       setResults({
         precoBrutoSaca,
@@ -201,7 +200,7 @@ export function Calculator() {
     });
   };
 
-  const handleExport = () => {
+  const handleOpenFaturamentoDialog = () => {
     if (!isSimulated) {
       toast({
         variant: 'destructive',
@@ -210,27 +209,7 @@ export function Calculator() {
       });
       return;
     }
-    const data = form.getValues();
-    const headers = 'Tipo de Operação,CFOP,CST,Preço Base,Frete,Imposto,Líquido/saca,Líquido/ton\n';
-    const row = [
-      data.tipoOperacao,
-      data.cfop,
-      data.cst,
-      (data.precoBase ?? 0).toFixed(2),
-      (data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0).toFixed(2),
-      results.impostosSaca.toFixed(2),
-      results.precoLiquidoFinalSaca.toFixed(2),
-      results.liquidoFinalTon.toFixed(2),
-    ].join(',');
-
-    const csvContent = 'data:text/csv;charset=utf-8,' + headers + row;
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'valor_agro_faturamento.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    setIsFaturamentoDialogOpen(true);
   };
 
   const handleFormError = () => {
@@ -264,7 +243,7 @@ export function Calculator() {
             <Trash2 />
             Limpar
           </Button>
-          <Button type="button" variant="outline" onClick={handleExport}>
+          <Button type="button" variant="outline" onClick={handleOpenFaturamentoDialog}>
             <FileText />
             Gerar IN Faturamento
           </Button>
@@ -279,6 +258,11 @@ export function Calculator() {
         onOpenChange={setIsCfopDialogOpen}
         cfop={form.watch('cfop')}
         cst={form.watch('cst')}
+      />
+      <FaturamentoDialog
+        isOpen={isFaturamentoDialogOpen}
+        onOpenChange={setIsFaturamentoDialogOpen}
+        cfop={form.watch('cfop')}
       />
     </Form>
   );
