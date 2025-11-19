@@ -119,7 +119,7 @@ export function NotaFiscalDialog({ isOpen, onOpenChange, formValues, results }: 
                         <tr>
                             <Cell className="border-r-0" colSpan={5}>
                                 <div className="text-left font-bold">Nome</div>
-                                <div className="text-left text-sm h-6">PLANTA BRASIL AGRONEGOCIOS LTDA</div>
+                                <div className="text-left text-sm h-6">VALOR AGRO CALCULATOR SA</div>
                             </Cell>
                             <Cell className="border-l-0 border-r-0" colSpan={4}>
                                 <div className="text-left font-bold">CNPJ</div>
@@ -188,7 +188,7 @@ export function NotaFiscalDialog({ isOpen, onOpenChange, formValues, results }: 
                             <Cell className="text-red-600">{formValues.cst}</Cell>
                             <Cell className="text-red-600">KG</Cell>
                             <Cell>40.000</Cell>
-                            <Cell className="text-red-600" colSpan={2}>{precoKg.toFixed(2)}</Cell>
+                            <Cell className="text-red-600" colSpan={2}>{precoKg.toFixed(4)}</Cell>
                             <Cell className="text-red-600" colSpan={2}>{valorTotal.toFixed(2)}</Cell>
                             <Cell colSpan={2}>&nbsp;</Cell>
                         </tr>
