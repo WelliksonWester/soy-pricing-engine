@@ -103,15 +103,15 @@ export function Calculator() {
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
 
       // Inputs from form (direct values)
-      const custoIcmsOleo = data.custoIcmsOleo ?? 0;
-      const custoFinanceiro = data.custoFinanceiro ?? 0;
+      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
+      const custoFinanceiroTon = data.custoFinanceiro ?? 0;
       
       // Convert Ton to Saca
       const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
       const freteSaca = tonToSaca60kg(freteSojaTon);
       const custoIndustriaSaca = tonToSaca60kg(custoIndustriaTon);
-      const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleo);
-      const custoFinanceiroSaca = tonToSaca60kg(custoFinanceiro);
+      const custoIcmsOleoSaca = tonToSaca60kg(custoIcmsOleoTon);
+      const custoFinanceiroSaca = tonToSaca60kg(custoFinanceiroTon);
       const classificacaoSaca = tonToSaca60kg(valorClassificacaoTon);
       
       // Preço Bruto 1
@@ -141,21 +141,20 @@ export function Calculator() {
       // Calculations based on Preço Bruto 1
       const margemSaca = precoBruto1 * margemPercentual;
       const comissaoSaca = precoBruto1 * comissaoPercentual;
-      const funruralSaca = precoBruto1 * funruralDecimal;
-      const icmsSaca = precoBruto1 * icmsDecimal;
       
       // Final Liquid Calculation
-      const impostosSaca = funruralSaca + icmsSaca;
       const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; // This is 'Preço Bruto à pagar/saca'
+
+      const funruralSaca = liquidoFinalSaca * funruralDecimal;
+      const icmsSaca = liquidoFinalSaca * icmsDecimal;
+      const impostosSaca = funruralSaca + icmsSaca;
+
       const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
       const liquidoFinalTon = precoLiquidoFinalSaca / 0.06;
 
       // Legacy/Display values
-      const precoBrutoTon = precoBaseTon;
-      const tributoFunruralValorTon = precoBrutoTon * funruralDecimal;
-      const icmsValorTon = precoBrutoTon * icmsDecimal;
-      const liquidoAPagarTon = precoBrutoTon - (tributoFunruralValorTon + icmsValorTon);
-      const precoLiquidoSaca = precoBrutoSaca - funruralSaca - icmsSaca;
+      const precoLiquidoSaca = precoBrutoSaca - impostosSaca; // Adjusted this line to use the final tax value
+      const liquidoAPagarTon = precoLiquidoFinalSaca / 0.06; // Adjusted to be consistent
 
       setResults({
         precoBrutoSaca,
@@ -217,7 +216,7 @@ export function Calculator() {
       data.tipoOperacao,
       data.cfop,
       data.cst,
-      data.precoBase.toFixed(2),
+      (data.precoBase ?? 0).toFixed(2),
       (data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0).toFixed(2),
       results.impostosSaca.toFixed(2),
       results.precoLiquidoFinalSaca.toFixed(2),
