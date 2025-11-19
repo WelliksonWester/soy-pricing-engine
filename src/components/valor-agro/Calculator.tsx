@@ -15,6 +15,7 @@ import { TaxesAndSimulationCard } from './TaxesAndSimulationCard';
 import { ResultsCard } from './ResultsCard';
 import { CfopDialog } from './CfopDialog';
 import { FaturamentoDialog } from './FaturamentoDialog';
+import { NotaFiscalDialog } from './NotaFiscalDialog';
 
 const defaultValues: Partial<CalculatorFormValues> = {
   tipoOperacao: 'Intraestadual',
@@ -44,7 +45,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
 
 const initialResults: ResultsState = {
   precoBrutoSaca: 0,
-  funruralPercentual: 1.5, // Default for Produtor Rural + Faturamento
+  funruralPercentual: 1.5,
   icmsSaca: 0,
   icmsPercentual: 0,
   precoLiquidoSaca: 0,
@@ -66,13 +67,12 @@ const initialResults: ResultsState = {
 const sulSudesteSemES = ['PR', 'RS', 'SC', 'SP', 'RJ', 'MG'];
 const norteNordesteCOComES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'RN', 'RO', 'RR', 'SE', 'TO'];
 
-const tonToSaca60kg = (value: number) => (value / 1000) * 60;
-
 export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
   const [isSimulated, setIsSimulated] = useState(false);
   const [isCfopDialogOpen, setIsCfopDialogOpen] = useState(false);
   const [isFaturamentoDialogOpen, setIsFaturamentoDialogOpen] = useState(false);
+  const [isNotaFiscalDialogOpen, setIsNotaFiscalDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<CalculatorFormValues>({
@@ -108,6 +108,7 @@ export function Calculator() {
       const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const custoFinanceiroTon = data.custoFinanceiro ?? 0;
       
+      // Values per Bag (Saca)
       const precoBrutoSaca = (precoBaseTon / 1000) * 60;
       const freteSaca = (freteSojaTon / 1000) * 60;
       const custoIndustriaSaca = (custoIndustriaTon / 1000) * 60;
@@ -115,7 +116,7 @@ export function Calculator() {
       const custoFinanceiroSaca = (custoFinanceiroTon / 1000) * 60;
       const classificacaoSaca = (valorClassificacaoTon / 1000) * 60;
       
-      // Preço Bruto 1 (ou Liquido Final 1)
+      // Preço Bruto 1
       const precoBruto1 = precoBrutoSaca - freteSaca - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca;
 
       // Percentage values from form
@@ -138,20 +139,24 @@ export function Calculator() {
 
       const funruralDecimal = funruralPercentual / 100;
       const icmsDecimal = icmsPercentual / 100;
-
-      // Calculations based on Preço Bruto 1
+      
+      // Margem e comissão são calculados sobre o preço bruto 1
       const margemSaca = precoBruto1 * margemPercentual;
       const comissaoSaca = precoBruto1 * comissaoPercentual;
       
-      const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; // This is 'Preço Bruto à pagar/saca'
+      // Preço Bruto à Pagar
+      const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; 
 
+      // Impostos
       const icmsSaca = liquidoFinalSaca * icmsDecimal;
       const funruralSaca = liquidoFinalSaca * funruralDecimal;
       const impostosSaca = funruralSaca + icmsSaca;
-
+      
+      // Preço Líquido
       const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
       const liquidoFinalTon = precoLiquidoFinalSaca / 0.06;
 
+      // Old values for display compatibility
       const precoLiquidoSaca = precoBrutoSaca - impostosSaca;
       const liquidoAPagarTon = precoLiquidoFinalSaca / 0.06; 
 
@@ -190,6 +195,7 @@ export function Calculator() {
     }
   };
 
+
   const handleClear = () => {
     form.reset(defaultValues);
     setResults(initialResults);
@@ -199,8 +205,8 @@ export function Calculator() {
       description: 'O formulário foi resetado para os valores padrão.',
     });
   };
-
-  const handleOpenFaturamentoDialog = () => {
+  
+  const checkSimulation = (dialogAction: () => void) => {
     if (!isSimulated) {
       toast({
         variant: 'destructive',
@@ -209,8 +215,9 @@ export function Calculator() {
       });
       return;
     }
-    setIsFaturamentoDialogOpen(true);
+    dialogAction();
   };
+
 
   const handleFormError = () => {
      toast({
@@ -243,26 +250,26 @@ export function Calculator() {
             <Trash2 />
             Limpar
           </Button>
-          <Button type="button" variant="outline" onClick={handleOpenFaturamentoDialog}>
+          <Button type="button" variant="outline" onClick={() => checkSimulation(() => setIsFaturamentoDialogOpen(true))}>
             <FileText />
             Gerar IN Faturamento
           </Button>
-          <Button type="button" variant="outline" onClick={() => setIsCfopDialogOpen(true)}>
+          <Button type="button" variant="outline" onClick={() => checkSimulation(() => setIsNotaFiscalDialogOpen(true))}>
             <FileText />
             Gerar Modelo de Nota Fiscal
           </Button>
         </div>
       </form>
-      <CfopDialog
-        isOpen={isCfopDialogOpen}
-        onOpenChange={setIsCfopDialogOpen}
-        cfop={form.watch('cfop')}
-        cst={form.watch('cst')}
-      />
       <FaturamentoDialog
         isOpen={isFaturamentoDialogOpen}
         onOpenChange={setIsFaturamentoDialogOpen}
         cfop={form.watch('cfop')}
+      />
+      <NotaFiscalDialog
+        isOpen={isNotaFiscalDialogOpen}
+        onOpenChange={setIsNotaFiscalDialogOpen}
+        formValues={form.getValues()}
+        results={results}
       />
     </Form>
   );
