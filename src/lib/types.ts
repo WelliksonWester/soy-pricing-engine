@@ -46,4 +46,5 @@ export interface ResultsState {
   liquidoFinalSaca: number;
   liquidoFinalTon: number;
   liquidoFinalCarga: number;
+  precoLiquidoFinalSaca: number;
 }

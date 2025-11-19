@@ -36,7 +36,8 @@ export function ResultsCard({ results }: ResultsCardProps) {
     comissaoSaca,
     liquidoFinalSaca,
     liquidoFinalTon,
-    liquidoFinalCarga
+    liquidoFinalCarga,
+    precoLiquidoFinalSaca
   } = results;
 
   return (
@@ -49,7 +50,6 @@ export function ResultsCard({ results }: ResultsCardProps) {
         <div className="space-y-2 rounded-lg border p-4">
             <ResultRow label="Custo Bruto/Saca" value={formatCurrency(precoBrutoSaca)} />
             <ResultRow label="Frete/saca (se CIF)" value={formatCurrency(freteSaca)} />
-            <ResultRow label="Impostos/saca" value={formatCurrency(impostosSaca)} />
         </div>
         
         <Separator />
@@ -66,7 +66,8 @@ export function ResultsCard({ results }: ResultsCardProps) {
             <SummaryRow label="- Margem" value={formatCurrency(margemSaca)} />
             <SummaryRow label="- Comissão" value={formatCurrency(comissaoSaca)} />
             <SummaryRow label="Preço Bruto à pagar/saca" value={formatCurrency(liquidoFinalSaca)} isTotal={true}/>
-            <SummaryRow label="Preço Líquido à pagar/saca" value={formatCurrency(0)} isTotal={true}/>
+            <SummaryRow label="- Impostos/saca" value={formatCurrency(impostosSaca)} />
+            <SummaryRow label="Preço Líquido à pagar/saca" value={formatCurrency(precoLiquidoFinalSaca)} isTotal={true}/>
            </div>
         </div>
 

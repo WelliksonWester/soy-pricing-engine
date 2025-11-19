@@ -59,6 +59,7 @@ const initialResults: ResultsState = {
   liquidoFinalSaca: 0,
   liquidoFinalTon: 0,
   liquidoFinalCarga: 0,
+  precoLiquidoFinalSaca: 0,
 };
 
 const sulSudesteSemES = ['PR', 'RS', 'SC', 'SP', 'RJ', 'MG'];
@@ -98,10 +99,10 @@ export function Calculator() {
       // Inputs from form (Ton)
       const precoBaseTon = data.precoBase ?? 0;
       const custoIndustriaTon = data.custoIndustria ?? 0;
-      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
       const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
       const custoFinanceiroTon = data.custoFinanceiro ?? 0;
       const valorClassificacaoTon = (data.valorClassificacao ?? 0);
+      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
 
       // Convert Ton to Saca
       const precoBrutoSaca = tonToSaca60kg(precoBaseTon);
@@ -138,14 +139,15 @@ export function Calculator() {
       // Calculations based on Liquido Final 1
       const funruralSaca = liquidoFinal1 * funruralDecimal;
       const icmsSaca = liquidoFinal1 * icmsDecimal;
-      const impostosSaca = funruralSaca + icmsSaca;
-
+      
       const margemSaca = liquidoFinal1 * margemPercentual;
       const comissaoSaca = liquidoFinal1 * comissaoPercentual;
       
       // Final Liquid Calculation
-      const liquidoFinalSaca = liquidoFinal1 - margemSaca - comissaoSaca - impostosSaca;
-      const liquidoFinalTon = liquidoFinalSaca / 0.06;
+      const impostosSaca = funruralSaca + icmsSaca;
+      const liquidoFinalSaca = liquidoFinal1 - margemSaca - comissaoSaca;
+      const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
+      const liquidoFinalTon = precoLiquidoFinalSaca / 0.06;
 
       // Legacy/Display values
       const precoBrutoTon = precoBaseTon;
@@ -172,6 +174,7 @@ export function Calculator() {
         liquidoFinalSaca,
         liquidoFinalTon,
         liquidoFinalCarga: liquidoFinalTon * 30,
+        precoLiquidoFinalSaca,
       });
 
       setIsSimulated(true);
@@ -216,7 +219,7 @@ export function Calculator() {
       data.precoBase.toFixed(2),
       (data.tipoFrete === 'CIF' ? data.frete ?? 0 : 0).toFixed(2),
       results.impostosSaca.toFixed(2),
-      results.liquidoFinalSaca.toFixed(2),
+      results.precoLiquidoFinalSaca.toFixed(2),
       results.liquidoFinalTon.toFixed(2),
     ].join(',');
 
@@ -280,5 +283,3 @@ export function Calculator() {
     </Form>
   );
 }
-
-    
