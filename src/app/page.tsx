@@ -70,7 +70,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Usuário</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin" {...field} disabled={isLoading} />
+                      <Input placeholder="Digite seu usuário" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -83,7 +83,7 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="admin" {...field} disabled={isLoading} />
+                      <Input type="password" placeholder="Digite sua senha" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
