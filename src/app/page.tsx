@@ -34,20 +34,25 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginFormValues) => {
     setIsLoading(true);
-    if (data.username === 'admin' && data.password === 'admin') {
-      toast({
-        title: 'Login bem-sucedido!',
-        description: 'Redirecionando para o dashboard.',
-      });
-      router.push('/dashboard');
-    } else {
-      toast({
-        variant: 'destructive',
-        title: 'Erro de login',
-        description: 'Usuário ou senha incorretos.',
-      });
-      setIsLoading(false);
-    }
+
+    // Simulate a quick check
+    setTimeout(() => {
+      if (data.username === 'admin' && data.password === 'admin') {
+        toast({
+          title: 'Login bem-sucedido!',
+          description: 'Redirecionando para o dashboard.',
+        });
+        // Start navigation after showing toast
+        router.push('/dashboard');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Erro de login',
+          description: 'Usuário ou senha incorretos.',
+        });
+        setIsLoading(false);
+      }
+    }, 50); // A small delay to ensure UI updates before navigation
   };
 
   return (
