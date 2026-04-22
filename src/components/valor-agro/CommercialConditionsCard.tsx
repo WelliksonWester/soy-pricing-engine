@@ -7,6 +7,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { CalculatorFormValues } from '@/lib/types';
+import { calculateBasePrice, calculateIcmsOleoCost, calculateFinancialCost } from '@/lib/services/soy-service';
 import { cn } from '@/lib/utils';
 import { Separator } from '../ui/separator';
 
@@ -14,63 +15,57 @@ interface CommercialConditionsCardProps {
   form: UseFormReturn<CalculatorFormValues>;
 }
 
-const NumericInput = ({ field, prefix, suffix, noStep, ...props }: any) => (
+const NumericInput = ({ field, prefix, suffix, noStep, className, ...props }: any) => (
   <div className="relative">
-    {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{prefix}</span>}
+    {prefix && <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{prefix}</span>}
     <Input
       type="number"
       step={noStep ? undefined : "0.01"}
       {...field}
       {...props}
-      className={cn(prefix ? 'pl-9' : 'pr-9', suffix ? 'pr-9' : '')}
+      className={cn(prefix ? 'pl-8' : '', suffix ? 'pr-8' : '', className)}
       onChange={(e) => field.onChange(e.target.value === '' ? undefined : +e.target.value)}
     />
-    {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{suffix}</span>}
+    {suffix && <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span>}
   </div>
 );
 
 export function CommercialConditionsCard({ form }: CommercialConditionsCardProps) {
   const { control, watch, setValue } = form;
-  const tipoFrete = watch('tipoFrete');
-
-  const precoFarelo = watch('precoFarelo') ?? 0;
-  const freteFarelo = watch('freteFarelo') ?? 0;
-  const precoOleo = watch('precoOleo') ?? 0;
-  const freteOleo = watch('freteOleo') ?? 0;
-  const icmsOleo = watch('icmsOleo') ?? 0;
-  const financeiroDias = watch('financeiro') ?? 0;
   
+  const values = watch();
+
   useEffect(() => {
-    // Calculo do Preço Base
-    const valorFarelo = (precoFarelo * 0.76) - (freteFarelo * 0.76);
-    const valorOleo = (precoOleo * 0.185) - (freteOleo * 0.185);
-    const precoBaseValor = valorFarelo + valorOleo;
-    const precoBaseArredondado = parseFloat(precoBaseValor.toFixed(2));
-    setValue('precoBase', precoBaseArredondado, { shouldValidate: true });
-
-    // Calculo do custo ICMS Oleo
-    const custoIcmsOleoValor = ((precoOleo - freteOleo) * 0.185) * (icmsOleo / 100);
-    const custoIcmsOleoArredondado = parseFloat(custoIcmsOleoValor.toFixed(2));
-    setValue('custoIcmsOleo', custoIcmsOleoArredondado, { shouldValidate: true });
-
-    // Calculo do Custo Financeiro
-    const custoFinanceiroPercentual = (financeiroDias * 0.0833) / 100;
-    const custoFinanceiroValor = precoBaseValor * custoFinanceiroPercentual;
-    const custoFinanceiroArredondado = parseFloat(custoFinanceiroValor.toFixed(2));
-    setValue('custoFinanceiro', custoFinanceiroArredondado, { shouldValidate: true });
+    const basePrice = calculateBasePrice(
+      values.precoFarelo || 0,
+      values.freteFarelo || 0,
+      values.precoOleo || 0,
+      values.freteOleo || 0
+    );
     
-  }, [precoFarelo, freteFarelo, precoOleo, freteOleo, icmsOleo, financeiroDias, setValue]);
+    const icmsCost = calculateIcmsOleoCost(
+      values.precoOleo || 0,
+      values.freteOleo || 0,
+      values.icmsOleo || 0
+    );
 
+    const finCost = calculateFinancialCost(basePrice, values.financeiro || 0);
+
+    setValue('precoBase', basePrice);
+    setValue('custoIcmsOleo', icmsCost);
+    setValue('custoFinanceiro', finCost);
+    
+  }, [values.precoFarelo, values.freteFarelo, values.precoOleo, values.freteOleo, values.icmsOleo, values.financeiro, setValue]);
 
   useEffect(() => {
-    if (tipoFrete === 'CIF') {
+    if (values.tipoFrete === 'CIF') {
       setValue('classificacao', 'Origem');
     } else {
       setValue('classificacao', 'Destino');
       setValue('frete', 0);
       setValue('valorClassificacao', 0);
     }
-  }, [tipoFrete, setValue]);
+  }, [values.tipoFrete, setValue]);
 
   return (
     <Card>
@@ -78,271 +73,167 @@ export function CommercialConditionsCard({ form }: CommercialConditionsCardProps
         <CardTitle>Condições Comerciais</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="space-y-2">
-           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
-              control={control}
-              name="precoFarelo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preço Farelo (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="freteFarelo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Frete Farelo (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-           </div>
-        </div>
-        <div className="space-y-2">
-           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <FormField
-              control={control}
-              name="precoOleo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Preço Óleo (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="freteOleo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Frete Óleo (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-           </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={control}
+            name="precoFarelo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preço Farelo (R$/ton)</FormLabel>
+                <NumericInput field={field} prefix="R$" />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="freteFarelo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Frete Farelo (R$/ton)</FormLabel>
+                <NumericInput field={field} prefix="R$" />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="precoOleo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preço Óleo (R$/ton)</FormLabel>
+                <NumericInput field={field} prefix="R$" />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="freteOleo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Frete Óleo (R$/ton)</FormLabel>
+                <NumericInput field={field} prefix="R$" />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         
         <Separator />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <FormField
+            control={control}
+            name="precoBase"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preço base (Auto)</FormLabel>
+                <NumericInput field={field} prefix="R$" readOnly className="bg-muted" />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-2 gap-2">
             <FormField
               control={control}
-              name="precoBase"
+              name="financeiro"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preço base (R$/ton) *</FormLabel>
-                  <FormControl>
-                    <NumericInput field={{...field, value: field.value?.toFixed(2)}} prefix="R$" readOnly disabled className="bg-muted" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={control}
-                name="financeiro"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Financeiro | Qntd dias</FormLabel>
-                    <FormControl>
-                      <NumericInput field={field} suffix="dias" noStep />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={control}
-                name="custoFinanceiro"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Custo Financeiro (R$)</FormLabel>
-                    <FormControl>
-                      <NumericInput field={field} prefix="R$" readOnly disabled className="bg-muted" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={control}
-              name="custoIndustria"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Custo Indústria (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={control}
-                name="icmsOleo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ICMS Óleo (%)</FormLabel>
-                    <FormControl>
-                      <NumericInput field={field} suffix="%" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-               <FormField
-                control={control}
-                name="custoIcmsOleo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Custo ICMS Óleo (R$)</FormLabel>
-                    <FormControl>
-                      <NumericInput field={{...field, value: field.value?.toFixed(2)}} prefix="R$" readOnly disabled className="bg-muted" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-             <FormField
-              control={control}
-              name="frete"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Frete Soja (R$/ton)</FormLabel>
-                  <FormControl>
-                    <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
+                  <FormLabel>Dias Fin.</FormLabel>
+                  <NumericInput field={field} suffix="d" noStep />
                 </FormItem>
               )}
             />
             <FormField
               control={control}
-              name="tipoFrete"
+              name="custoFinanceiro"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Tipo de Frete</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex items-center space-x-4"
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="CIF" />
-                        </FormControl>
-                        <FormLabel className="font-normal">CIF</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="FOB" />
-                        </FormControl>
-                        <FormLabel className="font-normal">FOB</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem>
+                  <FormLabel>Custo Fin.</FormLabel>
+                  <NumericInput field={field} prefix="R$" readOnly className="bg-muted text-xs" />
                 </FormItem>
               )}
             />
-             <FormField
+          </div>
+          <FormField
+            control={control}
+            name="custoIndustria"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Custo Indústria (R$/ton)</FormLabel>
+                <NumericInput field={field} prefix="R$" />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <FormField
               control={control}
-              name="valorClassificacao"
+              name="icmsOleo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Valor Classificação (R$/ton)</FormLabel>
-                  <FormControl>
-                     <NumericInput field={field} prefix="R$" disabled={tipoFrete !== 'CIF'} />
-                  </FormControl>
-                  <FormMessage />
+                  <FormLabel>ICMS Óleo</FormLabel>
+                  <NumericInput field={field} suffix="%" />
                 </FormItem>
               )}
             />
             <FormField
               control={control}
-              name="classificacao"
+              name="custoIcmsOleo"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Classificação</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      value={field.value}
-                      className="flex items-center space-x-4"
-                      disabled
-                    >
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Origem" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Origem</FormLabel>
-                      </FormItem>
-                      <FormItem className="flex items-center space-x-2 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="Destino" />
-                        </FormControl>
-                        <FormLabel className="font-normal">Destino</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem>
+                  <FormLabel>Custo ICMS</FormLabel>
+                  <NumericInput field={field} prefix="R$" readOnly className="bg-muted text-xs" />
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={control}
-                name="margem"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Margem (%) *</FormLabel>
-                    <FormControl>
-                       <NumericInput field={field} suffix="%" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={control}
-                name="comissao"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Comissão (%) *</FormLabel>
-                    <FormControl>
-                       <NumericInput field={field} suffix="%" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+          </div>
+          <FormField
+            control={control}
+            name="tipoFrete"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Frete</FormLabel>
+                <RadioGroup onValueChange={field.onChange} value={field.value} className="flex space-x-2">
+                  <div className="flex items-center space-x-1"><RadioGroupItem value="CIF" id="cif" /><label htmlFor="cif">CIF</label></div>
+                  <div className="flex items-center space-x-1"><RadioGroupItem value="FOB" id="fob" /><label htmlFor="fob">FOB</label></div>
+                </RadioGroup>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="frete"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Valor Frete Soja</FormLabel>
+                <NumericInput field={field} prefix="R$" disabled={values.tipoFrete !== 'CIF'} />
+              </FormItem>
+            )}
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={control}
+              name="margem"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Margem %</FormLabel>
+                  <NumericInput field={field} suffix="%" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={control}
+              name="comissao"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Comissão %</FormLabel>
+                  <NumericInput field={field} suffix="%" />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>
   );
 }
-
-    
-    

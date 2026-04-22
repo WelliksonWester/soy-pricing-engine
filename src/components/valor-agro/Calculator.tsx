@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { z } from 'zod';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { CalculatorIcon, FileText, Trash2 } from 'lucide-react';
 import { calculatorSchema, type ResultsState, type CalculatorFormValues } from '@/lib/types';
+import { performFullSimulation } from '@/lib/services/soy-service';
 import { OperationDataCard } from './OperationDataCard';
 import { CommercialConditionsCard } from './CommercialConditionsCard';
 import { TaxesAndSimulationCard } from './TaxesAndSimulationCard';
@@ -63,9 +63,6 @@ const initialResults: ResultsState = {
   precoLiquidoFinalSaca: 0,
 };
 
-const sulSudesteSemES = ['PR', 'RS', 'SC', 'SP', 'RJ', 'MG'];
-const norteNordesteCOComES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'RN', 'RO', 'RR', 'SE', 'TO'];
-
 export function Calculator() {
   const [results, setResults] = useState<ResultsState>(initialResults);
   const [isSimulated, setIsSimulated] = useState(false);
@@ -79,105 +76,10 @@ export function Calculator() {
     mode: 'onChange',
   });
 
-  const tipoVendedor = form.watch('tipoVendedor');
-  const optanteFunrural = form.watch('optanteFunrural');
-  const tipoOperacao = form.watch('tipoOperacao');
-
-  useEffect(() => {
-    let funruralPercentual = 0;
-    if (tipoVendedor === 'Produtor Rural') {
-        funruralPercentual = optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
-    } else {
-        funruralPercentual = 0;
-    }
-    setResults((prev) => ({ ...prev, funruralPercentual }));
-  }, [tipoVendedor, optanteFunrural]);
-
-
   const onSubmit = (data: CalculatorFormValues) => {
     try {
-      // Inputs from form (Ton)
-      const precoBaseTon = data.precoBase ?? 0;
-      const custoIndustriaTon = data.custoIndustria ?? 0;
-      const freteSojaTon = data.tipoFrete === 'CIF' ? (data.frete ?? 0) : 0;
-      const valorClassificacaoTon = (data.valorClassificacao ?? 0);
-
-      // Inputs from form (direct values)
-      const custoIcmsOleoTon = data.custoIcmsOleo ?? 0;
-      const custoFinanceiroTon = data.custoFinanceiro ?? 0;
-      
-      // Values per Bag (Saca)
-      const precoBrutoSaca = (precoBaseTon / 1000) * 60;
-      const freteSaca = (freteSojaTon / 1000) * 60;
-      const custoIndustriaSaca = (custoIndustriaTon / 1000) * 60;
-      const custoIcmsOleoSaca = (custoIcmsOleoTon / 1000) * 60;
-      const custoFinanceiroSaca = (custoFinanceiroTon / 1000) * 60;
-      const classificacaoSaca = (valorClassificacaoTon / 1000) * 60;
-      
-      // Preço Bruto 1
-      const precoBruto1 = precoBrutoSaca - freteSaca - custoIndustriaSaca - custoIcmsOleoSaca - custoFinanceiroSaca - classificacaoSaca;
-
-      // Percentage values from form
-      const margemPercentual = data.margem / 100;
-      const comissaoPercentual = data.comissao / 100;
-      
-      const calcMargem = 100 - data.margem;
-      const margemSaca = precoBruto1 * (1 - (calcMargem/100));
-
-      const calcComissao = 100 - data.comissao;
-      const comissaoSaca = precoBruto1 * (1 - (calcComissao/100));
-      
-      // Preço Bruto à Pagar
-      const liquidoFinalSaca = precoBruto1 - margemSaca - comissaoSaca; 
-
-      let funruralPercentual = 0;
-      if (data.tipoVendedor === 'Produtor Rural') {
-          funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
-      }
-      
-      let icmsPercentual = 0;
-      if (data.tipoOperacao === 'Interestadual') {
-        if (sulSudesteSemES.includes(data.estadoOrigem) && norteNordesteCOComES.includes(data.estadoDestino)) {
-          icmsPercentual = 7;
-        } else if (data.estadoOrigem !== data.estadoDestino) {
-          icmsPercentual = 12;
-        }
-      }
-
-      const funruralDecimal = funruralPercentual / 100;
-      const icmsDecimal = icmsPercentual / 100;
-
-      // Impostos
-      const icmsSaca = liquidoFinalSaca * icmsDecimal;
-      const funruralSaca = liquidoFinalSaca * funruralDecimal;
-      const impostosSaca = funruralSaca + icmsSaca;
-      
-      // Preço Líquido
-      const precoLiquidoFinalSaca = liquidoFinalSaca - impostosSaca;
-      const liquidoFinalTon = precoLiquidoFinalSaca > 0 ? (precoLiquidoFinalSaca / 60) * 1000 : 0;
-
-
-      setResults({
-        precoBrutoSaca,
-        funruralPercentual,
-        icmsSaca,
-        icmsPercentual,
-        precoLiquidoSaca: liquidoFinalSaca,
-        liquidoAPagarTon: liquidoFinalTon,
-        freteSaca,
-        impostosSaca,
-        custoIndustriaSaca,
-        custoIcmsOleoSaca,
-        custoFinanceiroSaca,
-        classificacaoSaca,
-        margemSaca,
-        comissaoSaca,
-        liquidoFinalSaca,
-        liquidoFinalTon,
-        liquidoFinalCarga: liquidoFinalTon * 30,
-        precoLiquidoFinalSaca,
-      });
-
+      const simulationResults = performFullSimulation(data);
+      setResults(simulationResults);
       setIsSimulated(true);
       toast({
         title: 'Simulação Concluída',
@@ -187,46 +89,21 @@ export function Calculator() {
       toast({
         variant: 'destructive',
         title: 'Erro na Simulação',
-        description: 'Verifique os valores inseridos e tente novamente.',
+        description: 'Ocorreu um erro ao processar os cálculos.',
       });
     }
   };
-
 
   const handleClear = () => {
     form.reset(defaultValues);
     setResults(initialResults);
     setIsSimulated(false);
-    toast({
-      title: 'Campos Limpos',
-      description: 'O formulário foi resetado para os valores padrão.',
-    });
+    toast({ title: 'Campos Limpos' });
   };
-  
-  const checkSimulation = (dialogAction: () => void) => {
-    if (!isSimulated) {
-      toast({
-        variant: 'destructive',
-        title: 'Sem dados para gerar',
-        description: 'Por favor, execute uma simulação primeiro.',
-      });
-      return;
-    }
-    dialogAction();
-  };
-
-
-  const handleFormError = () => {
-     toast({
-        variant: "destructive",
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os campos obrigatórios.",
-      });
-  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, handleFormError)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:items-start">
           <div className="space-y-6">
             <OperationDataCard form={form} />
@@ -240,19 +117,29 @@ export function Calculator() {
 
         <div className="flex flex-wrap items-center justify-center gap-4 rounded-lg border bg-card p-4">
           <Button type="submit">
-            <CalculatorIcon />
+            <CalculatorIcon className="mr-2 h-4 w-4" />
             Simular
           </Button>
           <Button type="button" variant="outline" onClick={handleClear}>
-            <Trash2 />
+            <Trash2 className="mr-2 h-4 w-4" />
             Limpar
           </Button>
-          <Button type="button" variant="outline" onClick={() => checkSimulation(() => setIsFaturamentoDialogOpen(true))}>
-            <FileText />
+          <Button 
+            type="button" 
+            variant="outline" 
+            disabled={!isSimulated}
+            onClick={() => setIsFaturamentoDialogOpen(true)}
+          >
+            <FileText className="mr-2 h-4 w-4" />
             Gerar IN Faturamento
           </Button>
-          <Button type="button" variant="outline" onClick={() => checkSimulation(() => setIsNotaFiscalDialogOpen(true))}>
-            <FileText />
+          <Button 
+            type="button" 
+            variant="outline" 
+            disabled={!isSimulated}
+            onClick={() => setIsNotaFiscalDialogOpen(true)}
+          >
+            <FileText className="mr-2 h-4 w-4" />
             Gerar Modelo de Nota Fiscal
           </Button>
         </div>
