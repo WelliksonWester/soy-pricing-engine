@@ -47,7 +47,8 @@ export function performFullSimulation(data: CalculatorFormValues): ResultsState 
   // Cálculo de Impostos
   let funruralPercentual = 0;
   if (data.tipoVendedor === 'Produtor Rural') {
-    funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.5 : 0.2;
+    // Atualizado de 1.5 para 1.63 conforme solicitado
+    funruralPercentual = data.optanteFunrural === 'Faturamento' ? 1.63 : 0.2;
   }
 
   let icmsPercentual = 0;

@@ -44,7 +44,7 @@ const defaultValues: Partial<CalculatorFormValues> = {
 
 const initialResults: ResultsState = {
   precoBrutoSaca: 0,
-  funruralPercentual: 1.5,
+  funruralPercentual: 1.63, // Atualizado para refletir a nova alíquota padrão
   icmsSaca: 0,
   icmsPercentual: 0,
   precoLiquidoSaca: 0,
