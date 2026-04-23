@@ -1,0 +1,52 @@
+@startuml
+header ValorAgro - Modelo de Domínio
+title Diagrama de Classes - Estrutura de Precificação
+
+package "Entidades de Domínio" {
+    class CalculatorFormValues {
+        +tipoOperacao: string
+        +tipoVendedor: string
+        +estadoOrigem: string
+        +estadoDestino: string
+        +precoFarelo: number
+        +precoOleo: number
+        +financeiro: number
+        +tipoFrete: string
+    }
+
+    class ResultsState {
+        +precoBrutoSaca: number
+        +funruralPercentual: number
+        +icmsSaca: number
+        +precoLiquidoFinalSaca: number
+        +liquidoFinalTon: number
+        +liquidoFinalCarga: number
+    }
+
+    class UserSettings {
+        +custoIndustriaPadrao: number
+        +margemPadrao: number
+        +taxaFinanceiraDiaria: number
+        +funruralFaturamento: number
+    }
+}
+
+package "Serviços" {
+    class SoyService {
+        +calculateBasePrice(): number
+        +calculateIcmsOleoCost(): number
+        +performFullSimulation(): ResultsState
+    }
+}
+
+CalculatorFormValues ..> SoyService : input
+UserSettings ..> SoyService : parâmetros
+SoyService ..> ResultsState : output
+
+note top of UserSettings
+  Dados persistidos no Firestore
+  para garantir que o faturista não precise
+  digitar custos fixos repetidamente.
+end note
+
+@enduml

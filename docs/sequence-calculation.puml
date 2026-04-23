@@ -1,0 +1,37 @@
+@startuml
+header ValorAgro - Fluxo de Dados
+title Diagrama de Sequência - Cálculo de Preço Líquido
+
+autonumber
+
+actor "Usuário" as user
+participant "Interface (UI)" as ui
+participant "Firebase Auth" as auth
+participant "Firestore (DB)" as db
+participant "SoyService (Lib)" as service
+
+user -> ui : Insere preços (Farelo/Óleo) e dias fin.
+ui -> auth : Verifica autenticação
+auth --> ui : Usuário OK
+
+ui -> db : Busca Parâmetros Globais\n(Custo Indústria, Margem, Taxas)
+db --> ui : Retorna Configurações
+
+ui -> service : performFullSimulation(Dados + Parâmetros)
+activate service
+
+note over service
+  Aplica rendimentos padrão:
+  Farelo (76%) e Óleo (18.5%)
+end note
+
+service -> service : Calcular Preço Base (Crush Spread)
+service -> service : Calcular Impostos (Funrural/ICMS)
+service -> service : Calcular Custo Financeiro (Tempo)
+
+service --> ui : Retorna ResultsState (Líquido Saca/Ton/Carga)
+deactivate service
+
+ui -> user : Exibe Resultado e habilita exportação PDF
+
+@enduml

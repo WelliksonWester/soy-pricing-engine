@@ -1,0 +1,39 @@
+@startuml
+header ValorAgro - Projeto de Engenharia
+title Diagrama de Casos de Uso - Gestão de Faturamento de Soja
+
+left to right direction
+
+actor "Faturista / Trader" as faturista
+actor "Administrador" as admin
+
+package "ValorAgro PWA" {
+    usecase "Realizar Simulação de Preço" as UC1
+    usecase "Exportar Instrução de Faturamento (PDF)" as UC2
+    usecase "Gerar Modelo de Nota Fiscal" as UC3
+    usecase "Configurar Parâmetros de Custo" as UC4
+    usecase "Definir Alíquotas de Impostos" as UC5
+    usecase "Autenticar no Sistema" as UC6
+}
+
+faturista --> UC6
+faturista --> UC1
+faturista --> UC2
+faturista --> UC3
+
+admin --> UC6
+admin --> UC4
+admin --> UC5
+
+note right of UC1
+  Cálculo converte Tonelada (Indústria)
+  em Saca de 60kg (Produtor), descontando
+  Frete CIF/FOB e impostos.
+end note
+
+note right of UC4
+  Inclui Custo de Esmagamento,
+  Margem de Lucro e Taxa Financeira.
+end note
+
+@enduml
